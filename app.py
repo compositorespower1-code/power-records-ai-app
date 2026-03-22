@@ -56,16 +56,22 @@ def supabase_write(key, data):
 
 
 ROUTE_MAP = {
-    '/api/artist':   ('artist_profile', {"name": "", "photo": "", "plan": "motor", "recording_day": "", "rhythm": "enfocado"}),
-    '/api/plan':     ('artist_plan', {"tasks": [], "completed": []}),
-    '/api/metrics':  ('artist_metrics', {"spotify": 0, "instagram": 0, "tiktok": 0, "youtube": 0}),
-    '/api/fandom':   ('artist_fandom', {"posts": [], "engagement": 0}),
-    '/api/calendar': ('artist_calendar', {"events": []}),
-    '/api/portfolio':('artist_portfolio', {"tracks": [], "videos": []}),
-    '/api/vault':    ('artist_vault', {"files": []}),
-    '/api/resources':('artist_resources', {"items": []}),
-    '/api/shows':    ('artist_shows', {"upcoming": [], "past": []}),
-    '/api/alerts':   ('artist_alerts', {"items": []}),
+    '/api/artist':     ('artist_profile', {"name": "", "photo": "", "plan": "motor", "recording_day": "", "rhythm": "enfocado"}),
+    '/api/plan':       ('artist_plan', {"tasks": [], "completed": []}),
+    '/api/metrics':    ('artist_metrics', {"spotify": 0, "instagram": 0, "tiktok": 0, "youtube": 0}),
+    '/api/fandom':     ('artist_fandom', {"posts": [], "engagement": 0}),
+    '/api/calendar':   ('artist_calendar', {"events": []}),
+    '/api/portfolio':  ('artist_portfolio', {"tracks": [], "videos": []}),
+    '/api/vault':      ('artist_vault', {"files": []}),
+    '/api/resources':  ('artist_resources', {"items": []}),
+    '/api/shows':      ('artist_shows', {"upcoming": [], "past": []}),
+    '/api/alerts':     ('artist_alerts', {"items": []}),
+    '/api/tareas-app': ('artist_tareas_app', {"semana": [], "mes": [], "ano12": [], "logros_semana": [], "logros_mes": [], "logros_ano12": []}),
+    '/api/leads':      ('artist_leads', []),
+    '/api/prompts':    ('artist_prompts', []),
+    '/api/pipeline':   ('artist_pipeline', {"compositores": [], "producciones": [], "videoclips": []}),
+    '/api/equipo':     ('artist_equipo', []),
+    '/api/ideas':      ('artist_ideas', []),
 }
 
 POST_ROUTES = set(ROUTE_MAP.keys())
@@ -102,7 +108,19 @@ class ArtistHandler(http.server.SimpleHTTPRequestHandler):
         return json.loads(post_data.decode('utf-8'))
 
     def do_POST(self):
-        if self.path in POST_ROUTES:
+        if self.path == '/api/leads':
+            # Special handling: leads are appended, not overwritten
+            new_lead = self.read_post_body()
+            try:
+                leads = supabase_read('artist_leads', [])
+                new_lead['time'] = datetime.datetime.now().strftime("%H:%M")
+                leads.insert(0, new_lead)
+                leads = leads[:20]
+                supabase_write('artist_leads', leads)
+                self.send_json({"status": "success"})
+            except Exception as e:
+                self.send_json({"error": str(e)})
+        elif self.path in POST_ROUTES:
             data = self.read_post_body()
             try:
                 key, _ = ROUTE_MAP[self.path]
@@ -127,4 +145,5 @@ if __name__ == "__main__":
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), ArtistHandler) as httpd:
         print(f"Power Records AI Artist App en puerto {PORT}")
+        print(f"Directorio publico: {PUBLIC_DIR}")
         httpd.serve_forever()

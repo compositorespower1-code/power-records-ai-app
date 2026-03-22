@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Power Records AI</title>
+    <title>POWER RECORDS - Artist Hub</title>
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#030308">
+    <meta name="theme-color" content="#0a0a0f">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #030308;
-            --card-bg: rgba(255,255,255,0.05);
-            --card-border: rgba(255,255,255,0.07);
+            --bg: #0a0a0f;
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --card-border: rgba(255, 255, 255, 0.08);
             --text: #ffffff;
-            --text-dim: #6a6a7a;
+            --text-dim: #8a8a9a;
             --accent: #a855f7;
             --accent2: #06d6a0;
             --accent3: #f97316;
-            --gold: #ffd700;
+            --accent4: #3b82f6;
             --radius: 20px;
+            --radius-sm: 14px;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         body {
@@ -26,910 +27,1826 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden;
-            padding-bottom: 80px;
+            padding: 16px;
+            padding-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+        .container { width: 100%; max-width: 500px; }
 
-        /* ============ BANNER ============ */
-        .hero-banner {
-            width: 100%; height: 220px;
-            position: relative; overflow: hidden;
+        /* ============ HEADER ============ */
+        header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding: 24px 0 16px;
+            position: sticky;
+            top: 0;
+            background: linear-gradient(to bottom, var(--bg) 80%, transparent);
+            z-index: 100;
         }
-        .hero-banner img {
-            width: 100%; height: 100%;
-            object-fit: cover; object-position: center 30%;
-        }
-        .hero-banner::after {
-            content: '';
-            position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
-            background: linear-gradient(to top, var(--bg), transparent);
-        }
-        .hero-logo {
-            position: absolute; bottom: 16px; left: 20px; z-index: 2;
-            font-size: 0.65rem; font-weight: 800; letter-spacing: 3px;
-            color: rgba(255,255,255,0.7); text-transform: uppercase;
-        }
-
-        /* ============ ARTIST PHOTO ============ */
-        .artist-section {
-            display: flex; flex-direction: column; align-items: center;
-            margin-top: -60px; position: relative; z-index: 10;
-        }
-        .artist-photo-wrap {
-            width: 150px; height: 150px; border-radius: 50%;
-            position: relative; display: flex; align-items: center; justify-content: center;
-        }
-        .artist-glow {
-            position: absolute; width: 170px; height: 170px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(168,85,247,0.4), transparent 70%);
-            animation: glowPulse 3s ease-in-out infinite;
-        }
-        @keyframes glowPulse {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.15); opacity: 1; }
-        }
-        .artist-photo {
-            width: 150px; height: 150px; border-radius: 50%;
-            border: 3px solid var(--accent);
-            object-fit: cover; position: relative; z-index: 2;
-            background: #111;
-        }
-        .artist-photo.plan-motor { border-color: #888; }
-        .artist-photo.plan-creator { border-color: #3b82f6; }
-        .artist-photo.plan-pro { border-color: var(--accent); }
-        .artist-photo.plan-elite { border-color: var(--gold); box-shadow: 0 0 30px rgba(255,215,0,0.5); }
-        .crown {
-            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-            font-size: 2rem; z-index: 5; filter: drop-shadow(0 0 8px rgba(255,215,0,0.8));
-            display: none;
-        }
-        .crown.visible { display: block; animation: crownBounce 2s ease-in-out infinite; }
-        @keyframes crownBounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-4px); }
-        }
-        .artist-name {
-            font-size: 1.4rem; font-weight: 900; margin-top: 12px;
-            text-align: center; letter-spacing: 0.5px;
-        }
-        .artist-plan-badge {
-            font-size: 0.65rem; font-weight: 700; padding: 4px 14px;
-            border-radius: 20px; margin-top: 6px; text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-        .badge-motor { background: rgba(136,136,136,0.2); color: #aaa; }
-        .badge-creator { background: rgba(59,130,246,0.2); color: #60a5fa; }
-        .badge-pro { background: rgba(168,85,247,0.2); color: #c084fc; }
-        .badge-elite { background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,165,0,0.3)); color: var(--gold); }
-
-        /* ============ AGENTS ORBIT ============ */
-        .orbit-container {
-            position: relative; width: 320px; height: 320px;
-            margin: 30px auto 10px;
-        }
-        .orbit-center {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px; height: 70px; border-radius: 50%;
-            background: rgba(168,85,247,0.1);
-            border: 2px solid rgba(168,85,247,0.3);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem;
-        }
-        .orbit-agent {
-            position: absolute; width: 48px; height: 48px;
-            border-radius: 50%; cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+        .header-brand { font-weight: 900; font-size: 1.6rem; letter-spacing: 1px; color: #fff; }
+        .header-sub { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+        .profile-section { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 20px; }
+        .profile-pic {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            border: 2.5px solid var(--accent);
             overflow: hidden;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            cursor: pointer;
         }
-        .orbit-agent:active { transform: scale(1.2) !important; }
-        .orbit-agent img {
-            width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
-        }
-        .orbit-agent.locked {
-            filter: grayscale(1) brightness(0.4);
-        }
-        .orbit-agent.locked::after {
-            content: '🔒'; position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%); font-size: 0.9rem;
-        }
-        .orbit-line {
-            position: absolute; background: rgba(255,255,255,0.06);
-            transform-origin: left center; height: 1px;
-        }
-        .orbit-label {
-            position: absolute; font-size: 0.5rem; font-weight: 700;
-            color: var(--text-dim); white-space: nowrap; text-align: center;
-            pointer-events: none;
-        }
+        .profile-pic img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .profile-info { text-align: left; }
+        .profile-name { font-weight: 800; font-size: 1.05rem; color: #fff; }
+        .profile-role { font-size: 0.7rem; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; }
 
-        /* ============ MOTIVATIONAL QUOTE ============ */
-        .quote-section {
-            text-align: center; padding: 20px 24px; margin: 10px 16px;
-            background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(6,214,160,0.05));
-            border-radius: var(--radius); border: 1px solid rgba(168,85,247,0.1);
-        }
-        .quote-text {
-            font-size: 0.85rem; font-style: italic; color: rgba(255,255,255,0.8);
-            line-height: 1.5; min-height: 40px;
-            transition: opacity 0.5s;
-        }
-        .quote-author {
-            font-size: 0.6rem; color: var(--accent); margin-top: 8px;
-            font-weight: 600;
-        }
-
-        /* ============ MODULES GRID ============ */
-        .modules-label {
-            font-size: 0.75rem; font-weight: 800; color: var(--text-dim);
-            text-transform: uppercase; letter-spacing: 2px;
-            margin: 28px 20px 14px;
-        }
-        .modules-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 12px; padding: 0 16px;
-        }
-        .mod-card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 16px; padding: 20px 14px;
-            text-align: center; cursor: pointer;
-            transition: all 0.3s; position: relative; overflow: hidden;
-        }
-        .mod-card:active, .mod-card.glow {
-            border-color: rgba(168,85,247,0.4);
-            box-shadow: 0 0 25px rgba(168,85,247,0.2);
-            background: rgba(255,255,255,0.08);
-        }
-        .mod-card::before {
-            content: ''; position: absolute;
-            top: -40%; right: -40%; width: 100px; height: 100px;
-            background: rgba(255,255,255,0.03); border-radius: 50%;
-        }
-        .mod-icon { font-size: 2rem; margin-bottom: 8px; position: relative; z-index: 1; }
-        .mod-title { font-size: 0.78rem; font-weight: 800; color: #fff; position: relative; z-index: 1; }
-        .mod-sub { font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; position: relative; z-index: 1; }
-
-        /* ============ ALERTS BANNER ============ */
-        .alert-banner {
-            margin: 20px 16px; padding: 16px 18px;
-            background: linear-gradient(135deg, #7c2d12, #9a3412);
-            border-radius: 16px; cursor: pointer;
-            display: flex; align-items: center; gap: 12px;
+        /* ============ BANNER CARD ============ */
+        .banner-card {
+            background: linear-gradient(135deg, #4a044e, #701a75, #86198f);
+            border-radius: var(--radius);
+            padding: 22px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 28px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
             transition: transform 0.2s;
         }
-        .alert-banner:active { transform: scale(0.98); }
-        .alert-icon { font-size: 1.5rem; }
-        .alert-text { flex: 1; }
-        .alert-title { font-size: 0.85rem; font-weight: 800; }
-        .alert-desc { font-size: 0.7rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+        .banner-card:active, .banner-card.glow { transform: scale(0.98); background: linear-gradient(135deg, #86198f, #a21caf, #c026d3); box-shadow: 0 0 40px rgba(192, 38, 211, 0.5); }
+        .banner-card::after {
+            content: '';
+            position: absolute;
+            top: -50%; right: -30%;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+        .banner-icon { font-size: 2.8rem; z-index: 1; }
+        .banner-text { z-index: 1; flex: 1; }
+        .banner-title { font-weight: 800; font-size: 1.1rem; color: #fff; margin-bottom: 4px; }
+        .banner-desc { font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.3; }
+        .banner-arrow { font-size: 1.3rem; color: rgba(255,255,255,0.6); z-index: 1; }
 
-        /* ============ RECORDING DAY ============ */
-        .recording-banner {
-            margin: 12px 16px; padding: 18px;
-            background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(6,214,160,0.1));
-            border: 1px solid rgba(168,85,247,0.2);
-            border-radius: 16px; text-align: center;
-        }
-        .rec-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ef4444; margin-right: 6px; animation: recBlink 1.5s infinite; }
-        @keyframes recBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .rec-title { font-size: 0.85rem; font-weight: 800; }
-        .rec-sub { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
+        /* ============ SECTION LABEL ============ */
+        .section-label { font-size: 0.95rem; font-weight: 700; color: rgba(255,255,255,0.9); margin: 24px 0 16px 4px; }
+        .section-header { font-size: 0.8rem; font-weight: 700; color: var(--text-dim); margin: 24px 0 12px 4px; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        /* ============ RHYTHM MODES ============ */
-        .rhythm-section { padding: 0 16px; margin: 20px 0; }
-        .rhythm-cards { display: flex; gap: 10px; }
-        .rhythm-card {
-            flex: 1; padding: 14px 8px; border-radius: 14px;
-            text-align: center; cursor: pointer; transition: all 0.3s;
-            border: 1px solid var(--card-border); background: var(--card-bg);
+        /* ============ MAIN GRID ============ */
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+        .vibe-card {
+            border-radius: var(--radius);
+            padding: 28px 16px 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s ease, background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 160px;
         }
-        .rhythm-card.active {
-            border-color: var(--accent); background: rgba(168,85,247,0.15);
-            box-shadow: 0 0 20px rgba(168,85,247,0.2);
+        .vibe-card:active, .vibe-card.glow { transform: scale(0.96); }
+        .vibe-card::before {
+            content: '';
+            position: absolute;
+            top: -40%; right: -40%;
+            width: 160px; height: 160px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
         }
-        .rhythm-icon { font-size: 1.3rem; }
-        .rhythm-name { font-size: 0.65rem; font-weight: 800; margin-top: 6px; }
-        .rhythm-time { font-size: 0.55rem; color: var(--text-dim); margin-top: 2px; }
-
-        /* ============ BOTTOM NAV ============ */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(3,3,8,0.95);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.06);
-            display: flex; justify-content: space-around;
-            padding: 8px 0 env(safe-area-inset-bottom, 8px);
-            z-index: 1000;
+        .vibe-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30%; left: -30%;
+            width: 120px; height: 120px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 50%;
         }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            gap: 2px; cursor: pointer; padding: 4px 12px;
-            transition: color 0.2s; color: var(--text-dim);
+        .vibe-purple { background: linear-gradient(145deg, #3b0764, #581c87, #6b21a8); box-shadow: 0 4px 16px rgba(88, 28, 135, 0.2); }
+        .vibe-green { background: linear-gradient(145deg, #022c22, #064e3b, #065f46); box-shadow: 0 4px 16px rgba(6, 78, 59, 0.2); }
+        .vibe-blue { background: linear-gradient(145deg, #172554, #1e3a8a, #1e40af); box-shadow: 0 4px 16px rgba(30, 58, 138, 0.2); }
+        .vibe-orange { background: linear-gradient(145deg, #431407, #7c2d12, #9a3412); box-shadow: 0 4px 16px rgba(124, 45, 18, 0.2); }
+        .vibe-pink { background: linear-gradient(145deg, #4a044e, #701a75, #86198f); box-shadow: 0 4px 16px rgba(112, 26, 117, 0.2); }
+        .vibe-teal { background: linear-gradient(145deg, #042f2e, #134e4a, #115e59); box-shadow: 0 4px 16px rgba(19, 78, 74, 0.2); }
+        .vibe-red { background: linear-gradient(145deg, #450a0a, #7f1d1d, #991b1b); box-shadow: 0 4px 16px rgba(127, 29, 29, 0.2); }
+        .vibe-purple:active, .vibe-purple.glow { background: linear-gradient(145deg, #7e22ce, #9333ea, #a855f7); box-shadow: 0 0 50px rgba(168, 85, 247, 0.6), 0 0 100px rgba(168, 85, 247, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-green:active, .vibe-green.glow { background: linear-gradient(145deg, #047857, #059669, #10b981); box-shadow: 0 0 50px rgba(16, 185, 129, 0.6), 0 0 100px rgba(16, 185, 129, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-blue:active, .vibe-blue.glow { background: linear-gradient(145deg, #1d4ed8, #2563eb, #3b82f6); box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 0 100px rgba(59, 130, 246, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-orange:active, .vibe-orange.glow { background: linear-gradient(145deg, #c2410c, #ea580c, #f97316); box-shadow: 0 0 50px rgba(249, 115, 22, 0.6), 0 0 100px rgba(249, 115, 22, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-icon {
+            font-size: 2.8rem;
+            z-index: 1;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            transition: filter 0.2s, transform 0.2s;
         }
-        .nav-item.active { color: var(--accent); }
-        .nav-icon { font-size: 1.2rem; }
-        .nav-label { font-size: 0.55rem; font-weight: 700; }
-
-        /* ============ AGENT PANEL ============ */
-        .agent-panel {
-            position: fixed; bottom: -100%; left: 0; right: 0;
-            background: linear-gradient(to top, #0a0a14, #12121f);
-            border-top-left-radius: 24px; border-top-right-radius: 24px;
-            padding: 24px; z-index: 2000;
-            transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            max-height: 70vh; overflow-y: auto;
+        .vibe-card:active .vibe-icon, .vibe-card.glow .vibe-icon {
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)) drop-shadow(0 0 40px rgba(255,255,255,0.2));
+            transform: scale(1.15);
         }
-        .agent-panel.open { bottom: 0; }
-        .agent-panel-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); z-index: 1999;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        .agent-panel-overlay.open { opacity: 1; pointer-events: all; }
-        .agent-panel-handle {
-            width: 40px; height: 4px; border-radius: 4px;
-            background: rgba(255,255,255,0.2); margin: 0 auto 20px;
-        }
-        .agent-panel-photo {
-            width: 80px; height: 80px; border-radius: 50%;
-            object-fit: cover; margin: 0 auto; display: block;
-        }
-        .agent-panel-name {
-            text-align: center; font-size: 1.1rem; font-weight: 900;
-            margin-top: 12px;
-        }
-        .agent-panel-role {
-            text-align: center; font-size: 0.75rem; color: var(--text-dim);
-            margin-top: 4px;
-        }
-        .agent-panel-btn {
-            display: block; width: 100%; margin-top: 20px;
-            padding: 14px; border: none; border-radius: 14px;
-            font-size: 0.85rem; font-weight: 800; cursor: pointer;
-            font-family: inherit; transition: all 0.3s;
-        }
-        .agent-panel-btn.talk {
-            background: linear-gradient(135deg, var(--accent), #7c3aed);
+        .vibe-title { font-size: 0.85rem; font-weight: 800; color: #fff; z-index: 1; text-transform: uppercase; letter-spacing: 0.5px; }
+        .vibe-desc { font-size: 0.7rem; color: rgba(255,255,255,0.7); z-index: 1; line-height: 1.3; }
+        .vibe-btn {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: none;
             color: #fff;
+            padding: 8px 24px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            z-index: 1;
+            margin-top: 4px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
         }
-        .agent-panel-btn.upgrade {
-            background: linear-gradient(135deg, var(--gold), #f59e0b);
-            color: #000;
+
+        /* ============ MENU LIST CARDS ============ */
+        .menu-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+        .menu-card:active, .menu-card.glow { transform: scale(0.98); background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.2); box-shadow: 0 0 30px rgba(168, 85, 247, 0.15); }
+        .menu-card:active .menu-icon, .menu-card.glow .menu-icon { box-shadow: 0 0 20px currentColor; transform: scale(1.1); }
+        .menu-icon {
+            font-size: 2rem;
+            width: 48px; height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            flex-shrink: 0;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .menu-icon.bg-purple { background: rgba(147, 51, 234, 0.2); }
+        .menu-icon.bg-green { background: rgba(16, 185, 129, 0.2); }
+        .menu-icon.bg-blue { background: rgba(59, 130, 246, 0.2); }
+        .menu-icon.bg-orange { background: rgba(249, 115, 22, 0.2); }
+        .menu-icon.bg-pink { background: rgba(236, 72, 153, 0.2); }
+        .menu-text { flex: 1; }
+        .menu-title { font-weight: 700; font-size: 0.95rem; color: #fff; }
+        .menu-desc { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
+        .menu-arrow { color: rgba(255,255,255,0.3); font-size: 1.2rem; font-weight: 300; }
+
+        /* ============ LEADS ============ */
+        .leads-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .lead-card {
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .lead-info b { color: var(--accent); }
+        .lead-info span { font-size: 0.8rem; color: var(--text-dim); }
+        .lead-time { font-size: 0.7rem; opacity: 0.6; }
+
+        /* ============ TASK CARDS ============ */
+        .task-list { display: flex; flex-direction: column; gap: 10px; }
+        .task-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .task-card:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.1); }
+        .checkbox {
+            width: 24px; height: 24px;
+            border: 2.5px solid rgba(168, 85, 247, 0.4);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .task-card.completed .checkbox {
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            border-color: transparent;
+            box-shadow: 0 2px 8px rgba(147, 51, 234, 0.4);
+        }
+        .checkbox::after { content: '\2713'; color: #fff; font-size: 13px; font-weight: 800; display: none; }
+        .task-card.completed .checkbox::after { display: block; }
+        .task-text { font-size: 0.9rem; line-height: 1.4; color: #e0e0e8; }
+        .task-card.completed .task-text { text-decoration: line-through; color: var(--text-dim); opacity: 0.5; }
+
+        /* ============ PROMPTS ============ */
+        .prompts-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .prompt-card { background: var(--card-bg); border: 1px solid var(--card-border); padding: 16px; border-radius: var(--radius-sm); }
+        .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .prompt-title { font-weight: 700; color: var(--accent); font-size: 0.9rem; }
+        .copy-btn {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:active { background: var(--accent); color: #fff; transform: scale(0.95); }
+        .prompt-preview {
+            font-size: 0.82rem; color: var(--text-dim);
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; line-height: 1.4;
         }
 
         /* ============ VIEW MODAL ============ */
         .view-modal {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg); z-index: 500;
-            transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: var(--bg);
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column;
             overflow-y: auto;
         }
         .view-modal.active { transform: translateX(0); }
         .view-header {
-            position: sticky; top: 0; z-index: 10;
-            background: var(--bg); padding: 16px 20px;
+            position: sticky; top: 0;
+            background: rgba(10, 10, 15, 0.92);
+            backdrop-filter: blur(20px);
+            padding: 20px;
             display: flex; align-items: center; gap: 14px;
+            z-index: 10;
             border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .back-btn {
-            background: none; border: none; color: var(--accent);
-            font-size: 1.3rem; cursor: pointer; padding: 4px;
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: background 0.2s;
         }
-        .view-title { font-size: 1.1rem; font-weight: 800; }
-        .view-content { padding: 20px; padding-bottom: 40px; }
+        .back-btn:active { background: rgba(255,255,255,0.15); }
+        .view-title { font-size: 1.1rem; font-weight: 800; margin: 0; }
+        .view-content { padding: 20px; flex: 1; }
 
-        /* ============ MODULE CARDS ============ */
-        .task-item {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
-            display: flex; align-items: center; gap: 12px;
+        /* ============ COPY MODAL ============ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 3000;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
         }
-        .task-check {
-            width: 22px; height: 22px; border-radius: 50%;
-            border: 2px solid var(--accent); cursor: pointer;
-            flex-shrink: 0; transition: all 0.2s;
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: #1a1a24;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: var(--radius);
+            width: 90%; max-width: 400px;
+            padding: 24px;
+            display: flex; flex-direction: column; gap: 16px;
         }
-        .task-check.done {
-            background: var(--accent);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
-            background-size: 14px; background-repeat: no-repeat; background-position: center;
+        .modal-content h3 { margin: 0; color: var(--accent); font-size: 1.05rem; font-weight: 800; }
+        .modal-content p { margin: 0; font-size: 0.82rem; color: var(--text-dim); }
+        .modal-textarea {
+            width: 100%; height: 200px;
+            background: rgba(255,255,255,0.05); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px; padding: 12px;
+            font-size: 0.85rem; resize: none;
+            font-family: 'Inter', sans-serif;
         }
-        .task-text { flex: 1; font-size: 0.82rem; }
-        .task-text.done { text-decoration: line-through; opacity: 0.4; }
-        .add-btn {
-            display: block; width: 100%; padding: 14px; margin-top: 12px;
-            background: rgba(168,85,247,0.1); border: 1px dashed rgba(168,85,247,0.3);
-            border-radius: 14px; color: var(--accent); font-weight: 700;
-            font-size: 0.8rem; cursor: pointer; font-family: inherit;
-            transition: all 0.3s;
+        .close-modal-btn {
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            color: #fff; border: none;
+            padding: 12px; border-radius: 12px;
+            font-weight: 700; cursor: pointer;
+            font-size: 0.85rem;
         }
-        .add-btn:active { background: rgba(168,85,247,0.2); }
-        .metric-card {
-            background: var(--card-bg); border: 1px solid var(--card-border);
-            border-radius: 16px; padding: 18px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 14px;
-        }
-        .metric-icon { font-size: 2rem; }
-        .metric-info { flex: 1; }
-        .metric-label { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; }
-        .metric-value { font-size: 1.3rem; font-weight: 900; margin-top: 2px; }
 
-        /* ============ ANIMATIONS ============ */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* ============ LOADER ============ */
+        #loader {
+            position: fixed; top: 20px; right: 20px;
+            width: 8px; height: 8px;
+            border-radius: 50%; background: var(--accent);
+            display: none; z-index: 1000;
         }
-        .fade-in { animation: fadeInUp 0.6s ease forwards; }
-        .fade-in-d1 { animation-delay: 0.1s; opacity: 0; }
-        .fade-in-d2 { animation-delay: 0.2s; opacity: 0; }
-        .fade-in-d3 { animation-delay: 0.3s; opacity: 0; }
+        .syncing #loader { display: block; animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.8); }
+            100% { opacity: 0.3; transform: scale(1); }
+        }
 
+        /* ============ FORM STYLES ============ */
+        .form-input {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 13px 16px;
+            font-size: 0.88rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15); }
+        .form-input::placeholder { color: rgba(255,255,255,0.25); }
+        select.form-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a855f7' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 38px;
+        }
+        textarea.form-input { resize: vertical; min-height: 80px; }
+        .action-btn {
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            color: #fff; border: none;
+            padding: 13px 20px; border-radius: 12px;
+            font-weight: 700; font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; width: 100%;
+            font-family: 'Inter', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(147, 51, 234, 0.3);
+        }
+        .action-btn:active { transform: scale(0.97); }
+        .action-btn.secondary { background: var(--card-bg); color: var(--accent); border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: none; }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .pill-lead { background: rgba(160,160,160,0.15); color: #999; }
+        .pill-escritura { background: rgba(66,133,244,0.15); color: #6ea8fe; }
+        .pill-produccion { background: rgba(251,188,4,0.15); color: #fbbf24; }
+        .pill-grabacion { background: rgba(255,152,0,0.15); color: #fb923c; }
+        .pill-mezcla { background: rgba(168,85,247,0.15); color: #c084fc; }
+        .pill-master { background: rgba(236,72,153,0.15); color: #f472b6; }
+        .pill-lanzado { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .pill-planificado { background: rgba(160,160,160,0.15); color: #999; }
+        .pill-en_progreso { background: rgba(251,188,4,0.15); color: #fbbf24; }
+        .pill-revision { background: rgba(168,85,247,0.15); color: #c084fc; }
+        .pill-completado { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .pill-nueva { background: rgba(168,85,247,0.15); color: #c084fc; }
+        .pill-en_evaluacion { background: rgba(251,188,4,0.15); color: #fbbf24; }
+        .pill-aprobada { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .pill-descartada { background: rgba(239,68,68,0.15); color: #f87171; }
+        .pill-alta { background: rgba(239,68,68,0.15); color: #f87171; }
+        .pill-media { background: rgba(251,188,4,0.15); color: #fbbf24; }
+        .pill-baja { background: rgba(160,160,160,0.15); color: #999; }
+
+        .tab-nav {
+            display: flex; gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .tab-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-dim);
+            padding: 9px 18px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(147,51,234,0.3), rgba(168,85,247,0.2));
+            border-color: rgba(168, 85, 247, 0.4);
+            color: #c084fc;
+        }
+
+        .fab-add {
+            position: fixed; bottom: 30px; right: 30px;
+            width: 58px; height: 58px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            color: #fff; border: none;
+            font-size: 1.6rem; font-weight: 300;
+            cursor: pointer;
+            box-shadow: 0 6px 24px rgba(147, 51, 234, 0.4);
+            z-index: 2100;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s;
+        }
+        .fab-add:active { transform: scale(0.9) rotate(90deg); }
+
+        .v2-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+        }
+        .v2-card-row { display: flex; justify-content: space-between; align-items: center; }
+        .v2-card-title { font-weight: 700; font-size: 0.92rem; color: #fff; }
+        .v2-card-sub { font-size: 0.78rem; color: var(--text-dim); margin-top: 4px; }
+        .delete-btn {
+            background: rgba(239,68,68,0.1); border: none;
+            color: rgba(239,68,68,0.6); font-size: 0.9rem;
+            cursor: pointer; padding: 6px 10px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .delete-btn:active { background: rgba(239,68,68,0.2); color: #f87171; }
+
+        .add-form {
+            background: rgba(168, 85, 247, 0.05);
+            border: 1px dashed rgba(168, 85, 247, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 20px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .add-form.visible { display: flex; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row > * { flex: 1; }
+
+        .kpi-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .kpi-card:active { transform: scale(0.96); border-color: var(--accent); }
+        .kpi-value { font-size: 1.4rem; font-weight: 900; color: var(--accent); }
+        .kpi-label { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.3rem; font-weight: 900; color: var(--accent2); }
+        .stat-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; margin-top: 6px; }
+
+        .team-card { cursor: pointer; }
+        .team-details { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; margin-top: 0; }
+        .team-card.expanded .team-details { max-height: 600px; margin-top: 12px; }
+        .team-status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+        .team-status-dot.activo { background: #4ade80; box-shadow: 0 0 8px rgba(74, 222, 128, 0.4); }
+        .team-status-dot.inactivo { background: #f87171; box-shadow: 0 0 8px rgba(248, 113, 113, 0.4); }
+
+        .mini-task { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .mini-checkbox {
+            width: 20px; height: 20px;
+            border: 2px solid rgba(168,85,247,0.3);
+            border-radius: 6px;
+            flex-shrink: 0; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .mini-checkbox.done { background: linear-gradient(135deg, #9333ea, #a855f7); border-color: transparent; }
+        .mini-checkbox.done::after { content: '\2713'; color: #fff; font-size: 10px; font-weight: 800; }
+        .mini-task-text { font-size: 0.82rem; color: #ddd; }
+        .mini-task.done .mini-task-text { text-decoration: line-through; color: var(--text-dim); opacity: 0.4; }
+
+        .add-mini-task { display: flex; gap: 8px; margin-top: 10px; }
+        .add-mini-task input { flex: 1; }
+        .add-mini-task button { flex-shrink: 0; width: auto; padding: 10px 15px; }
+
+        .notes-area {
+            width: 100%; min-height: 60px;
+            background: rgba(255,255,255,0.04); color: #ddd;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; padding: 12px;
+            font-size: 0.82rem; resize: vertical;
+            font-family: 'Inter', sans-serif;
+            margin-top: 10px;
+        }
+        .notes-area:focus { outline: none; border-color: var(--accent); }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 0.85rem; }
+        .stage-select {
+            background: transparent; border: none;
+            color: inherit; font-size: inherit; font-weight: inherit;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer; padding: 4px 8px;
+            border-radius: 20px;
+        }
+
+        /* ============ AGENTS GRID ============ */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .agent-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 16px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .agent-card:active { transform: scale(0.96); border-color: var(--accent); box-shadow: 0 0 20px rgba(168,85,247,0.3); }
+        .agent-card.locked { opacity: 0.35; pointer-events: none; }
+        .agent-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 8px; right: 8px;
+            font-size: 0.7rem;
+        }
+        .agent-photo {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 8px;
+            display: block;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .agent-name { font-size: 0.72rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .agent-role { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* ============ RECORDER ============ */
+        .recorder-section { text-align: center; padding: 20px 0; }
+        .rec-btn {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border: 4px solid rgba(255,255,255,0.15);
+            color: #fff;
+            font-size: 2.2rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 24px rgba(220, 38, 38, 0.4);
+        }
+        .rec-btn:active { transform: scale(0.95); }
+        .rec-btn.recording {
+            animation: recPulse 1s infinite;
+            box-shadow: 0 0 40px rgba(220, 38, 38, 0.7);
+        }
+        @keyframes recPulse {
+            0% { box-shadow: 0 0 20px rgba(220,38,38,0.4); }
+            50% { box-shadow: 0 0 50px rgba(220,38,38,0.8); transform: scale(1.05); }
+            100% { box-shadow: 0 0 20px rgba(220,38,38,0.4); }
+        }
+        .rec-status { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; }
+        .rec-timer { font-size: 1.8rem; font-weight: 900; color: #ef4444; font-variant-numeric: tabular-nums; }
+        .recording-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .recording-play {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            border: none; color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .recording-info { flex: 1; }
+        .recording-name { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .recording-meta { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+
+        /* ============ PROFILE MODAL ============ */
+        .profile-modal {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 5000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .profile-modal.active { opacity: 1; pointer-events: auto; }
+        .profile-form {
+            background: #1a1a24;
+            border: 1px solid rgba(168,85,247,0.3);
+            border-radius: var(--radius);
+            width: 90%; max-width: 400px;
+            padding: 28px;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+        .profile-form h3 { margin: 0; color: var(--accent); font-size: 1.1rem; font-weight: 800; text-align: center; }
+
+        /* ============ SCROLLBAR ============ */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.3); border-radius: 4px; }
     </style>
 </head>
 <body>
-
-    <!-- BANNER -->
-    <div class="hero-banner fade-in">
-        <img src="img/banner.jpg" alt="Power Records AI">
-        <div class="hero-logo">POWER RECORDS AI</div>
-    </div>
-
-    <!-- ARTIST PHOTO -->
-    <div class="artist-section fade-in fade-in-d1">
-        <div class="artist-photo-wrap">
-            <div class="artist-glow" id="artistGlow"></div>
-            <div class="crown" id="artistCrown">👑</div>
-            <img class="artist-photo plan-pro" id="artistPhoto" src="img/banner.jpg" alt="Artist">
-        </div>
-        <div class="artist-name" id="artistName">Tu Nombre</div>
-        <div class="artist-plan-badge badge-pro" id="artistBadge">PRO</div>
-    </div>
-
-    <!-- AGENTS ORBIT -->
-    <div class="orbit-container fade-in fade-in-d2" id="orbitContainer">
-        <div class="orbit-center">🎵</div>
-    </div>
-
-    <!-- MOTIVATIONAL QUOTE -->
-    <div class="quote-section fade-in fade-in-d3">
-        <div class="quote-text" id="quoteText"></div>
-        <div class="quote-author" id="quoteAuthor"></div>
-    </div>
-
-    <!-- ALERTS -->
-    <div class="alert-banner fade-in" id="alertBanner" onclick="openView('alertsView')" style="display:none;">
-        <div class="alert-icon">🔔</div>
-        <div class="alert-text">
-            <div class="alert-title" id="alertTitle">Nuevas Oportunidades</div>
-            <div class="alert-desc" id="alertDesc">Convocatorias y becas disponibles</div>
-        </div>
-        <div style="color:rgba(255,255,255,0.5);">›</div>
-    </div>
-
-    <!-- RECORDING DAY -->
-    <div class="recording-banner fade-in" id="recBanner" style="display:none;">
-        <div class="rec-title"><span class="rec-dot"></span> Dia de Grabacion</div>
-        <div class="rec-sub" id="recDetails"></div>
-    </div>
-
-    <!-- RHYTHM MODES -->
-    <div class="rhythm-section fade-in">
-        <div class="modules-label">Modo de Ritmo</div>
-        <div class="rhythm-cards">
-            <div class="rhythm-card" data-rhythm="enfocado" onclick="setRhythm('enfocado')">
-                <div class="rhythm-icon">🎯</div>
-                <div class="rhythm-name">Enfocado</div>
-                <div class="rhythm-time">15 min/dia</div>
+    <div id="loader"></div>
+    <div class="container">
+        <header>
+            <div style="display:flex; justify-content:flex-end; margin-bottom:4px;">
+                <button id="langToggleBtn" onclick="event.stopPropagation(); toggleLang()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:5px 14px; color:#fff; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.3s;">ES | EN</button>
             </div>
-            <div class="rhythm-card" data-rhythm="crecimiento" onclick="setRhythm('crecimiento')">
-                <div class="rhythm-icon">📈</div>
-                <div class="rhythm-name">Crecimiento</div>
-                <div class="rhythm-time">30 min/dia</div>
+            <div class="header-brand">POWER RECORDS</div>
+            <div class="header-sub" data-es="Artist Hub" data-en="Artist Hub">Artist Hub</div>
+            <div class="profile-section">
+                <div class="profile-pic" onclick="openProfileModal()">
+                    <img id="profileImg" src="img/banner.jpg" alt="Artist">
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name" id="profileName">Artista</div>
+                    <div class="profile-role" id="profileRole">Plan Motor</div>
+                </div>
             </div>
-            <div class="rhythm-card active" data-rhythm="intenso" onclick="setRhythm('intenso')">
-                <div class="rhythm-icon">🔥</div>
-                <div class="rhythm-name">Intenso</div>
-                <div class="rhythm-time">45 min/dia</div>
+        </header>
+
+        <!-- BANNER -->
+        <div class="banner-card" onclick="openView('fandomView')">
+            <div class="banner-icon">💜</div>
+            <div class="banner-text">
+                <div class="banner-title" data-es="FANDOM" data-en="FANDOM">FANDOM</div>
+                <div class="banner-desc" data-es="Conecta con tus fans y comunidad" data-en="Connect with your fans and community">Conecta con tus fans y comunidad</div>
+            </div>
+            <div class="banner-arrow">›</div>
+        </div>
+
+        <div class="section-label" data-es="Modulos" data-en="Modules">Modulos</div>
+
+        <!-- MAIN GRID -->
+        <div class="main-grid">
+            <div class="vibe-card vibe-purple" onclick="openView('tareasDiaView')">
+                <div class="vibe-icon">📋</div>
+                <div class="vibe-title" data-es="Tareas" data-en="Tasks">Tareas</div>
+                <div class="vibe-desc" data-es="Gestion de tareas diarias" data-en="Daily task management">Gestion de tareas diarias</div>
+                <button class="vibe-btn" data-es="Abrir" data-en="Open">Abrir</button>
+            </div>
+            <div class="vibe-card vibe-green" onclick="openView('dreamTeamView')">
+                <div class="vibe-icon">🎯</div>
+                <div class="vibe-title" data-es="My Dream Team" data-en="My Dream Team">My Dream Team</div>
+                <div class="vibe-desc" data-es="Tus 9 agentes AI" data-en="Your 9 AI agents">Tus 9 agentes AI</div>
+                <button class="vibe-btn" data-es="Abrir" data-en="Open">Abrir</button>
+            </div>
+            <div class="vibe-card vibe-blue" onclick="openView('produccionesView')">
+                <div class="vibe-icon">🎛️</div>
+                <div class="vibe-title" data-es="Producciones" data-en="Productions">Producciones</div>
+                <div class="vibe-desc" data-es="Seguimiento musical" data-en="Music tracking">Seguimiento musical</div>
+                <button class="vibe-btn" data-es="Abrir" data-en="Open">Abrir</button>
+            </div>
+            <div class="vibe-card vibe-orange" onclick="openView('grabadoraView')">
+                <div class="vibe-icon">🎙️</div>
+                <div class="vibe-title" data-es="Grabadora" data-en="Recorder">Grabadora</div>
+                <div class="vibe-desc" data-es="Graba ideas musicales" data-en="Record musical ideas">Graba ideas musicales</div>
+                <button class="vibe-btn" data-es="Abrir" data-en="Open">Abrir</button>
             </div>
         </div>
-    </div>
 
-    <!-- MODULES -->
-    <div class="modules-label">Modulos</div>
-    <div class="modules-grid">
-        <div class="mod-card" onclick="openView('planView')">
-            <div class="mod-icon">📋</div>
-            <div class="mod-title">Plan de Hoy</div>
-            <div class="mod-sub">Tareas del dia</div>
+        <!-- MENU CARDS -->
+        <div class="menu-card" onclick="openView('equipoView')">
+            <div class="menu-icon bg-pink">👥</div>
+            <div class="menu-text">
+                <div class="menu-title" data-es="Equipo" data-en="Team">Equipo</div>
+                <div class="menu-desc" data-es="Seguimiento de tareas del equipo" data-en="Team task tracking">Seguimiento de tareas del equipo</div>
+            </div>
+            <div class="menu-arrow">›</div>
         </div>
-        <div class="mod-card" onclick="openView('metricsView')">
-            <div class="mod-icon">📊</div>
-            <div class="mod-title">Metricas</div>
-            <div class="mod-sub">Crecimiento en plataformas</div>
+        <div class="menu-card" onclick="openView('promptsView')">
+            <div class="menu-icon bg-purple">🤖</div>
+            <div class="menu-text">
+                <div class="menu-title">Prompts</div>
+                <div class="menu-desc" data-es="Contextos y plantillas AI" data-en="AI contexts and templates">Contextos y plantillas AI</div>
+            </div>
+            <div class="menu-arrow">›</div>
         </div>
-        <div class="mod-card" onclick="openView('fandomView')">
-            <div class="mod-icon">💜</div>
-            <div class="mod-title">Fandom</div>
-            <div class="mod-sub">Comunidad de fans</div>
+        <div class="menu-card" onclick="openView('ideasView')">
+            <div class="menu-icon bg-orange">💡</div>
+            <div class="menu-text">
+                <div class="menu-title" data-es="Innovacion / Ideas" data-en="Innovation / Ideas">Innovacion / Ideas</div>
+                <div class="menu-desc" data-es="Captura y evalua nuevas ideas" data-en="Capture and evaluate new ideas">Captura y evalua nuevas ideas</div>
+            </div>
+            <div class="menu-arrow">›</div>
         </div>
-        <div class="mod-card" onclick="openView('calendarView')">
-            <div class="mod-icon">📅</div>
-            <div class="mod-title">Calendario</div>
-            <div class="mod-sub">Proximos eventos</div>
-        </div>
-        <div class="mod-card" onclick="openView('portfolioView')">
-            <div class="mod-icon">🎶</div>
-            <div class="mod-title">Portfolio</div>
-            <div class="mod-sub">Tracks y videos</div>
-        </div>
-        <div class="mod-card" onclick="openView('vaultView')">
-            <div class="mod-icon">🔐</div>
-            <div class="mod-title">Boveda</div>
-            <div class="mod-sub">Archivos protegidos</div>
-        </div>
-        <div class="mod-card" onclick="openView('resourcesView')">
-            <div class="mod-icon">📚</div>
-            <div class="mod-title">Recursos</div>
-            <div class="mod-sub">Guias y tutoriales</div>
-        </div>
-        <div class="mod-card" onclick="openView('showsView')">
-            <div class="mod-icon">🎤</div>
-            <div class="mod-title">Shows</div>
-            <div class="mod-sub">Presentaciones en vivo</div>
+
+        <!-- RECENT FANDOM -->
+        <div class="section-label" style="margin-top: 28px;" data-es="Fandom Reciente" data-en="Recent Fandom">Fandom Reciente</div>
+        <div id="fandomContainer" class="leads-container">
+            <div style="font-size: 0.8rem; opacity: 0.4; padding: 10px;" data-es="Esperando actividad de fans..." data-en="Waiting for fan activity...">Esperando actividad de fans...</div>
         </div>
     </div>
 
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="navTo('home')">
-            <div class="nav-icon">🏠</div>
-            <div class="nav-label">Home</div>
-        </div>
-        <div class="nav-item" onclick="openView('planView')">
-            <div class="nav-icon">📋</div>
-            <div class="nav-label">Plan</div>
-        </div>
-        <div class="nav-item" onclick="showAgentPanel(AGENTS[0])">
-            <div class="nav-icon">👥</div>
-            <div class="nav-label">Equipo</div>
-        </div>
-        <div class="nav-item" onclick="openView('metricsView')">
-            <div class="nav-icon">📊</div>
-            <div class="nav-label">Metricas</div>
-        </div>
-        <div class="nav-item" onclick="openView('profileView')">
-            <div class="nav-icon">👤</div>
-            <div class="nav-label">Perfil</div>
-        </div>
-    </nav>
+    <!-- ============ VIEW MODALS ============ -->
 
-    <!-- AGENT PANEL -->
-    <div class="agent-panel-overlay" id="agentOverlay" onclick="closeAgentPanel()"></div>
-    <div class="agent-panel" id="agentPanel">
-        <div class="agent-panel-handle"></div>
-        <img class="agent-panel-photo" id="apPhoto" src="">
-        <div class="agent-panel-name" id="apName"></div>
-        <div class="agent-panel-role" id="apRole"></div>
-        <div id="apAction"></div>
-    </div>
-
-    <!-- VIEW MODALS -->
-    <div class="view-modal" id="planView">
+    <!-- TAREAS -->
+    <div class="view-modal" id="tareasDiaView">
         <div class="view-header">
-            <button class="back-btn" onclick="closeView('planView')">←</button>
-            <h2 class="view-title">Plan de Hoy</h2>
+            <button class="back-btn" onclick="closeView('tareasDiaView')">←</button>
+            <h2 class="view-title" data-es="Tareas" data-en="Tasks">Tareas</h2>
         </div>
-        <div class="view-content" id="planContent"></div>
+        <div class="view-content" id="tareasAppContainer">
+            <div id="liveClock" style="text-align:center; margin-bottom:28px;">
+                <div id="clockTime" style="font-size:3.5rem; font-weight:900; letter-spacing:3px; background:linear-gradient(135deg,#a855f7,#6366f1,#06b6d4); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;"></div>
+                <div id="clockDate" style="font-size:0.85rem; color:var(--text-dim); margin-top:6px;"></div>
+            </div>
+            <div id="tareasCardsHub">
+                <div class="vibe-card vibe-purple" onclick="openTareasSection('semana')" style="margin-bottom:14px; min-height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+                    <div class="vibe-icon">📅</div>
+                    <div class="vibe-title" data-es="Tareas del Dia" data-en="Today's Tasks">Tareas del Dia</div>
+                    <div class="vibe-desc" id="tareasSemanaBadge">0 tareas</div>
+                </div>
+                <div class="vibe-card vibe-blue" onclick="openTareasSection('mes')" style="margin-bottom:14px; min-height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+                    <div class="vibe-icon">🗓️</div>
+                    <div class="vibe-title" data-es="Tareas de la Semana" data-en="Weekly Tasks">Tareas de la Semana</div>
+                    <div class="vibe-desc" id="tareasMesBadge">0 tareas</div>
+                </div>
+                <div class="vibe-card vibe-orange" onclick="openTareasSection('ano12')" style="margin-bottom:14px; min-height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+                    <div class="vibe-icon">🔥</div>
+                    <div class="vibe-title" data-es="Año de 12 Semanas" data-en="12-Week Year">Año de 12 Semanas</div>
+                    <div class="vibe-desc" id="tareasAno12Badge">0 tareas</div>
+                </div>
+            </div>
+            <div id="tareasSubView" style="display:none;">
+                <button class="action-btn secondary" onclick="closeTareasSection()" style="margin-bottom:16px;" data-es="← Volver" data-en="← Back">← Volver</button>
+                <div id="tareasSubTitle" style="text-align:center; margin-bottom:12px;">
+                    <div id="tareasSubIcon" style="font-size:2.5rem;"></div>
+                    <div id="tareasSubName" style="font-size:1.2rem; font-weight:800; margin-top:6px;"></div>
+                </div>
+                <div id="tareasLogrosTab" style="display:flex; margin-bottom:16px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,0.06);">
+                    <button id="tabTareas" onclick="switchTareasTab('tareas')" style="flex:1; padding:10px; border:none; font-weight:700; font-size:0.85rem; cursor:pointer; transition:all 0.3s; font-family:inherit;" data-es="Tareas" data-en="Tasks">Tareas</button>
+                    <button id="tabLogros" onclick="switchTareasTab('logros')" style="flex:1; padding:10px; border:none; font-weight:700; font-size:0.85rem; cursor:pointer; transition:all 0.3s; font-family:inherit;" data-es="Logros" data-en="Achievements">Logros</button>
+                </div>
+                <div id="tareasSwipeContainer" style="overflow:hidden; position:relative; touch-action:pan-y;">
+                    <div id="tareasSwipeTrack" style="display:flex; width:200%; transition:transform 0.3s ease;">
+                        <div style="width:50%; flex-shrink:0;">
+                            <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+                                <button class="action-btn" onclick="addTareaApp(currentTareasSection)" style="font-size:0.7rem; padding:6px 14px;" data-es="+ Agregar Tarea" data-en="+ Add Task">+ Agregar Tarea</button>
+                            </div>
+                            <div id="tareasSubList"></div>
+                        </div>
+                        <div style="width:50%; flex-shrink:0;">
+                            <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+                                <button class="action-btn" onclick="addLogroApp(currentTareasSection)" style="font-size:0.7rem; padding:6px 14px;" data-es="+ Agregar Logro" data-en="+ Add Achievement">+ Agregar Logro</button>
+                            </div>
+                            <div id="logrosSubList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="view-modal" id="metricsView">
+    <!-- DREAM TEAM -->
+    <div class="view-modal" id="dreamTeamView">
         <div class="view-header">
-            <button class="back-btn" onclick="closeView('metricsView')">←</button>
-            <h2 class="view-title">Metricas</h2>
+            <button class="back-btn" onclick="closeView('dreamTeamView')">←</button>
+            <h2 class="view-title">My Dream Team</h2>
         </div>
-        <div class="view-content" id="metricsContent"></div>
+        <div class="view-content" id="dreamTeamContent"></div>
     </div>
 
+    <!-- PRODUCCIONES -->
+    <div class="view-modal" id="produccionesView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('produccionesView')">←</button>
+            <h2 class="view-title" data-es="Producciones" data-en="Productions">Producciones</h2>
+        </div>
+        <div class="view-content" id="pipelineContent"></div>
+    </div>
+
+    <!-- GRABADORA -->
+    <div class="view-modal" id="grabadoraView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('grabadoraView')">←</button>
+            <h2 class="view-title" data-es="Grabadora" data-en="Recorder">Grabadora</h2>
+        </div>
+        <div class="view-content" id="grabadoraContent"></div>
+    </div>
+
+    <!-- EQUIPO -->
+    <div class="view-modal" id="equipoView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('equipoView')">←</button>
+            <h2 class="view-title" data-es="Seguimiento Equipo" data-en="Team Tracking">Seguimiento Equipo</h2>
+        </div>
+        <div class="view-content" id="equipoContent"></div>
+    </div>
+
+    <!-- PROMPTS -->
+    <div class="view-modal" id="promptsView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('promptsView')">←</button>
+            <h2 class="view-title" data-es="Prompts y Contextos" data-en="Prompts & Contexts">Prompts y Contextos</h2>
+        </div>
+        <div class="view-content">
+            <div id="promptsContainer" class="prompts-container">
+                <div style="font-size: 0.8rem; opacity: 0.4; padding: 10px;">Cargando prompts...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IDEAS -->
+    <div class="view-modal" id="ideasView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('ideasView')">←</button>
+            <h2 class="view-title" data-es="Innovacion e Ideas" data-en="Innovation & Ideas">Innovacion e Ideas</h2>
+        </div>
+        <div class="view-content" id="ideasContent"></div>
+    </div>
+
+    <!-- FANDOM -->
     <div class="view-modal" id="fandomView">
         <div class="view-header">
             <button class="back-btn" onclick="closeView('fandomView')">←</button>
-            <h2 class="view-title">Fandom</h2>
+            <h2 class="view-title" data-es="Fandom" data-en="Fandom">Fandom</h2>
         </div>
-        <div class="view-content" id="fandomContent"></div>
+        <div class="view-content" id="fandomFullContent">
+            <div class="section-header" data-es="Engagement de Fans" data-en="Fan Engagement">Engagement de Fans</div>
+            <div id="fandomStats" class="stats-grid"></div>
+            <div class="section-header" data-es="Actividad Reciente" data-en="Recent Activity">Actividad Reciente</div>
+            <div id="fandomFullContainer" class="leads-container">
+                <div style="font-size: 0.8rem; opacity: 0.4; padding: 10px;">Esperando actividad de fans...</div>
+            </div>
+        </div>
     </div>
 
-    <div class="view-modal" id="calendarView">
+    <!-- AGENT DETAIL -->
+    <div class="view-modal" id="agentDetailView">
         <div class="view-header">
-            <button class="back-btn" onclick="closeView('calendarView')">←</button>
-            <h2 class="view-title">Calendario</h2>
+            <button class="back-btn" onclick="closeView('agentDetailView')">←</button>
+            <h2 class="view-title" id="agentDetailTitle">Agente</h2>
         </div>
-        <div class="view-content" id="calendarContent"></div>
+        <div class="view-content" id="agentDetailContent"></div>
     </div>
 
-    <div class="view-modal" id="portfolioView">
-        <div class="view-header">
-            <button class="back-btn" onclick="closeView('portfolioView')">←</button>
-            <h2 class="view-title">Portfolio</h2>
+    <!-- COPY MODAL -->
+    <div class="modal-overlay" id="copyModal">
+        <div class="modal-content">
+            <h3 data-es="Copiado Manual Requerido" data-en="Manual Copy Required">Copiado Manual Requerido</h3>
+            <p data-es="Manten presionado el texto, selecciona Copiar, y luego presiona Cerrar." data-en="Long press the text, select Copy, then press Close.">Manten presionado el texto, selecciona <b>Copiar</b>, y luego presiona Cerrar.</p>
+            <textarea class="modal-textarea" id="modalTextDisplay" readonly></textarea>
+            <button class="close-modal-btn" onclick="document.getElementById('copyModal').classList.remove('active')" data-es="Cerrar" data-en="Close">Cerrar</button>
         </div>
-        <div class="view-content" id="portfolioContent"></div>
     </div>
 
-    <div class="view-modal" id="vaultView">
-        <div class="view-header">
-            <button class="back-btn" onclick="closeView('vaultView')">←</button>
-            <h2 class="view-title">Boveda</h2>
+    <!-- PROFILE MODAL -->
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-form">
+            <h3>Perfil de Artista</h3>
+            <input class="form-input" id="pf_name" placeholder="Nombre del artista">
+            <input class="form-input" id="pf_photo" placeholder="URL de foto de perfil">
+            <select class="form-input" id="pf_plan">
+                <option value="motor">Plan Motor</option>
+                <option value="creator">Plan Creator</option>
+                <option value="pro">Plan Pro</option>
+                <option value="elite">Plan Elite</option>
+            </select>
+            <select class="form-input" id="pf_recday">
+                <option value="">Dia de grabacion...</option>
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miercoles">Miercoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+                <option value="Sabado">Sabado</option>
+                <option value="Domingo">Domingo</option>
+            </select>
+            <select class="form-input" id="pf_rhythm">
+                <option value="enfocado">Enfocado</option>
+                <option value="crecimiento">Crecimiento</option>
+                <option value="intenso">Intenso</option>
+            </select>
+            <button class="action-btn" onclick="saveProfile()">Guardar</button>
+            <button class="action-btn secondary" onclick="closeProfileModal()">Cancelar</button>
         </div>
-        <div class="view-content" id="vaultContent"></div>
     </div>
 
-    <div class="view-modal" id="resourcesView">
-        <div class="view-header">
-            <button class="back-btn" onclick="closeView('resourcesView')">←</button>
-            <h2 class="view-title">Recursos</h2>
-        </div>
-        <div class="view-content" id="resourcesContent"></div>
-    </div>
+    <script>
+        // ============ GLOBAL STATE ============
+        let artistData = { name: '', photo: '', plan: 'motor', recording_day: '', rhythm: 'enfocado' };
+        let tareasAppData = { semana: [], mes: [], ano12: [], logros_semana: [], logros_mes: [], logros_ano12: [] };
+        let pipelineData = null;
+        let equipoData = null;
+        let ideasData = null;
+        let fandomData = [];
+        let promptsData = [];
+        let clockInterval = null;
+        let currentPipeTab = 'compositores';
+        let currentIdeaFilter = 'todos';
+        let currentTareasSection = null;
+        let currentTareasTab = 'tareas';
 
-    <div class="view-modal" id="showsView">
-        <div class="view-header">
-            <button class="back-btn" onclick="closeView('showsView')">←</button>
-            <h2 class="view-title">Shows</h2>
-        </div>
-        <div class="view-content" id="showsContent"></div>
-    </div>
-
-    <div class="view-modal" id="alertsView">
-        <div class="view-header">
-            <button class="back-btn" onclick="closeView('alertsView')">←</button>
-            <h2 class="view-title">Oportunidades</h2>
-        </div>
-        <div class="view-content" id="alertsContent"></div>
-    </div>
-
-    <div class="view-modal" id="profileView">
-        <div class="view-header">
-            <button class="back-btn" onclick="closeView('profileView')">←</button>
-            <h2 class="view-title">Mi Perfil</h2>
-        </div>
-        <div class="view-content" id="profileContent"></div>
-    </div>
-
-<script>
-    // ============ AGENTS CONFIG ============
-    const AGENTS = [
-        { id: 'smith', name: 'Smith Varela', role: 'Manager', color: '#ff9100', img: 'img/smith.jpg', plans: ['motor','creator','pro','elite'] },
-        { id: 'claudia', name: 'Claudia Matisse', role: 'Branding', color: '#e040fb', img: 'img/claudia.jpg', plans: ['motor','creator','pro','elite'] },
-        { id: 'damian', name: 'Damian La Fonte', role: 'Booking', color: '#ff6d00', img: 'img/damian.jpg', plans: ['pro','elite'] },
-        { id: 'valeria', name: 'Valeria Dominguez', role: 'Styling', color: '#f50057', img: 'img/valeria.jpg', plans: ['creator','pro','elite'] },
-        { id: 'sofia', name: 'Sofia Mendoza', role: 'Fandom', color: '#d500f9', img: 'img/sofia.jpg', plans: ['creator','pro','elite'] },
-        { id: 'marcos', name: 'Marcos Rivera', role: 'Instagram', color: '#e91e63', img: 'img/marcos.jpg', plans: ['creator','pro','elite'] },
-        { id: 'luna', name: 'Luna Salazar', role: 'TikTok', color: '#00e5ff', img: 'img/luna.jpg', plans: ['creator','pro','elite'] },
-        { id: 'daniel', name: 'Daniel Herrera', role: 'YouTube', color: '#ff1744', img: 'img/daniel.jpg', plans: ['creator','pro','elite'] },
-        { id: 'mateo', name: 'Mateo Valenzuela', role: 'Spotify', color: '#1db954', img: 'img/mateo.jpg', plans: ['creator','pro','elite'] },
-    ];
-
-    const PLAN_ORDER = ['motor', 'creator', 'pro', 'elite'];
-    const PLAN_NAMES = { motor: 'Motor de Arranque', creator: 'Creator', pro: 'Pro', elite: 'Power Elite' };
-    const PLAN_PRICES = { motor: '$9', creator: '$37', pro: '$97', elite: '$250' };
-
-    // ============ QUOTES ============
-    const QUOTES = [
-        { text: 'La musica que llevas dentro merece ser escuchada por el mundo, [NOMBRE]. No dejes que el miedo detenga tu arte.', author: 'Smith Varela, Manager' },
-        { text: '[NOMBRE], tu marca personal es tu superpoder. Cada detalle cuenta en la industria.', author: 'Claudia Matisse, Branding' },
-        { text: 'Los escenarios te esperan, [NOMBRE]. Cada ensayo te acerca mas a tu primer sold-out.', author: 'Damian La Fonte, Booking' },
-        { text: 'Tu imagen es parte de tu mensaje, [NOMBRE]. Vistete como el artista que estas destinado a ser.', author: 'Valeria Dominguez, Styling' },
-        { text: '[NOMBRE], tus fans son tu familia musical. Conecta con ellos desde el corazon.', author: 'Sofia Mendoza, Fandom' },
-        { text: 'Instagram es tu escenario digital, [NOMBRE]. Cada post es una oportunidad de impactar.', author: 'Marcos Rivera, Instagram' },
-        { text: '[NOMBRE], TikTok puede cambiar tu carrera en un solo video. Atrévete a crear sin miedo.', author: 'Luna Salazar, TikTok' },
-        { text: 'YouTube es tu legado visual, [NOMBRE]. Lo que subas hoy lo veran millones manana.', author: 'Daniel Herrera, YouTube' },
-        { text: '[NOMBRE], cada stream cuenta. Tu musica merece ser escuchada en repeat.', author: 'Mateo Valenzuela, Spotify' },
-        { text: '[NOMBRE], el exito musical no es suerte — es estrategia, constancia y pasion. Tu equipo esta contigo.', author: 'Cris Velez, Director Power Records AI Latinoamerica' },
-    ];
-
-    // ============ STATE ============
-    let artistData = { name: 'Artista', photo: '', plan: 'pro', recording_day: 'Viernes', rhythm: 'intenso' };
-    let planData = { tasks: [], completed: [] };
-    let metricsData = { spotify: 1250, instagram: 3400, tiktok: 8900, youtube: 620 };
-    let currentQuote = 0;
-
-    // ============ HELPERS ============
-    function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-    async function getJSON(url) {
-        try { const r = await fetch(url); return await r.json(); } catch(e) { return null; }
-    }
-    async function postJSON(url, data) {
-        try { await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) }); } catch(e) {}
-    }
-
-    // ============ VIEWS ============
-    function openView(id) {
-        document.getElementById(id).classList.add('active');
-        document.body.style.overflow = 'hidden';
-        window.history.pushState({ view: id }, '', '#' + id);
-        if (viewRenderers[id]) viewRenderers[id]();
-    }
-    function closeView(id) {
-        document.getElementById(id).classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    window.addEventListener('popstate', () => {
-        document.querySelectorAll('.view-modal.active').forEach(v => v.classList.remove('active'));
-        document.body.style.overflow = '';
-    });
-
-    // ============ ORBIT RENDER ============
-    function renderOrbit() {
-        const container = document.getElementById('orbitContainer');
-        const cx = 160, cy = 160, radius = 125;
-        // Remove old agents
-        container.querySelectorAll('.orbit-agent, .orbit-line, .orbit-label').forEach(e => e.remove());
-
-        AGENTS.forEach((agent, i) => {
-            const angle = (i / AGENTS.length) * Math.PI * 2 - Math.PI / 2;
-            const x = cx + Math.cos(angle) * radius - 24;
-            const y = cy + Math.sin(angle) * radius - 24;
-
-            const isLocked = !agent.plans.includes(artistData.plan);
-
-            // Line
-            const line = document.createElement('div');
-            line.className = 'orbit-line';
-            const lx = cx, ly = cy;
-            const ax = x + 24, ay = y + 24;
-            const dist = Math.sqrt((ax - lx) ** 2 + (ay - ly) ** 2);
-            const angleL = Math.atan2(ay - ly, ax - lx);
-            line.style.cssText = `left:${lx}px; top:${ly}px; width:${dist - 40}px; transform:rotate(${angleL}rad) translateX(20px);`;
-            if (!isLocked) line.style.background = agent.color + '30';
-            container.appendChild(line);
-
-            // Agent circle
-            const el = document.createElement('div');
-            el.className = 'orbit-agent' + (isLocked ? ' locked' : '');
-            el.style.cssText = `left:${x}px; top:${y}px; border: 2px solid ${isLocked ? '#333' : agent.color}; box-shadow: ${isLocked ? 'none' : '0 0 12px ' + agent.color + '40'};`;
-            el.innerHTML = `<img src="${agent.img}" alt="${agent.name}">`;
-            el.onclick = () => showAgentPanel(agent);
-            container.appendChild(el);
-
-            // Label
-            const label = document.createElement('div');
-            label.className = 'orbit-label';
-            const labelX = cx + Math.cos(angle) * (radius + 30) - 30;
-            const labelY = cy + Math.sin(angle) * (radius + 30) - 6;
-            label.style.cssText = `left:${labelX}px; top:${labelY}px; width:60px; color:${isLocked ? '#444' : agent.color};`;
-            label.textContent = agent.name.split(' ')[0];
-            container.appendChild(label);
-        });
-    }
-
-    // ============ AGENT PANEL ============
-    function showAgentPanel(agent) {
-        const isLocked = !agent.plans.includes(artistData.plan);
-        document.getElementById('apPhoto').src = agent.img;
-        document.getElementById('apPhoto').style.border = `3px solid ${agent.color}`;
-        document.getElementById('apName').textContent = agent.name;
-        document.getElementById('apRole').textContent = agent.role;
-
-        const actionDiv = document.getElementById('apAction');
-        if (isLocked) {
-            const neededPlan = agent.plans[0];
-            actionDiv.innerHTML = `
-                <div style="text-align:center; margin-top:16px; padding:14px; background:rgba(255,255,255,0.04); border-radius:14px;">
-                    <div style="font-size:0.8rem; color:var(--text-dim);">Desbloquea a ${agent.name.split(' ')[0]} con el plan</div>
-                    <div style="font-size:1.1rem; font-weight:900; color:var(--gold); margin-top:4px;">${PLAN_NAMES[neededPlan]} ${PLAN_PRICES[neededPlan]}/mes</div>
-                </div>
-                <button class="agent-panel-btn upgrade">Upgrade a ${PLAN_NAMES[neededPlan]}</button>`;
-        } else {
-            actionDiv.innerHTML = `
-                <button class="agent-panel-btn talk">Hablar con ${agent.name.split(' ')[0]}</button>
-                <div style="text-align:center; margin-top:12px; font-size:0.7rem; color:var(--text-dim);">
-                    ${agent.role} de tu equipo Power Records AI
-                </div>`;
-        }
-
-        document.getElementById('agentPanel').classList.add('open');
-        document.getElementById('agentOverlay').classList.add('open');
-    }
-
-    function closeAgentPanel() {
-        document.getElementById('agentPanel').classList.remove('open');
-        document.getElementById('agentOverlay').classList.remove('open');
-    }
-
-    // ============ QUOTES ROTATION ============
-    function rotateQuote() {
-        const q = QUOTES[currentQuote];
-        const name = artistData.name || 'Artista';
-        document.getElementById('quoteText').textContent = q.text.replace('[NOMBRE]', name);
-        document.getElementById('quoteAuthor').textContent = '— ' + q.author;
-        currentQuote = (currentQuote + 1) % QUOTES.length;
-    }
-
-    // ============ ARTIST PROFILE UPDATE ============
-    function updateArtistUI() {
-        const plan = artistData.plan || 'pro';
-        const photo = document.getElementById('artistPhoto');
-        photo.className = 'artist-photo plan-' + plan;
-        document.getElementById('artistName').textContent = artistData.name || 'Tu Nombre';
-
-        const badge = document.getElementById('artistBadge');
-        badge.className = 'artist-plan-badge badge-' + plan;
-        badge.textContent = PLAN_NAMES[plan] || plan;
-
-        const crown = document.getElementById('artistCrown');
-        crown.className = plan === 'elite' ? 'crown visible' : 'crown';
-
-        const glow = document.getElementById('artistGlow');
-        const colors = { motor: '136,136,136', creator: '59,130,246', pro: '168,85,247', elite: '255,215,0' };
-        glow.style.background = `radial-gradient(circle, rgba(${colors[plan]},0.4), transparent 70%)`;
-
-        // Rhythm
-        document.querySelectorAll('.rhythm-card').forEach(c => {
-            c.classList.toggle('active', c.dataset.rhythm === artistData.rhythm);
-        });
-
-        // Recording day
-        if (artistData.recording_day) {
-            document.getElementById('recBanner').style.display = 'block';
-            document.getElementById('recDetails').textContent = artistData.recording_day;
-        }
-
-        renderOrbit();
-    }
-
-    function setRhythm(r) {
-        artistData.rhythm = r;
-        document.querySelectorAll('.rhythm-card').forEach(c => {
-            c.classList.toggle('active', c.dataset.rhythm === r);
-        });
-        postJSON('/api/artist', artistData);
-    }
-
-    // ============ MODULE RENDERERS ============
-    const viewRenderers = {
-        planView: renderPlan,
-        metricsView: renderMetrics,
-        profileView: renderProfile,
-        fandomView: () => renderPlaceholder('fandomContent', 'Fandom', 'Proximamente: gestiona tu comunidad de fans'),
-        calendarView: () => renderPlaceholder('calendarContent', 'Calendario', 'Proximamente: tus eventos y deadlines'),
-        portfolioView: () => renderPlaceholder('portfolioContent', 'Portfolio', 'Proximamente: tus tracks y videos'),
-        vaultView: () => renderPlaceholder('vaultContent', 'Boveda', 'Proximamente: archivos protegidos'),
-        resourcesView: () => renderPlaceholder('resourcesContent', 'Recursos', 'Proximamente: guias y tutoriales'),
-        showsView: () => renderPlaceholder('showsContent', 'Shows', 'Proximamente: gestiona tus presentaciones'),
-        alertsView: () => renderPlaceholder('alertsContent', 'Oportunidades', 'Proximamente: convocatorias y becas'),
-    };
-
-    function renderPlaceholder(containerId, title, desc) {
-        document.getElementById(containerId).innerHTML = `
-            <div style="text-align:center; padding:60px 20px;">
-                <div style="font-size:3rem; margin-bottom:16px;">🚀</div>
-                <div style="font-size:1rem; font-weight:800; margin-bottom:8px;">${title}</div>
-                <div style="font-size:0.8rem; color:var(--text-dim);">${desc}</div>
-            </div>`;
-    }
-
-    function renderPlan() {
-        const c = document.getElementById('planContent');
-        let html = '';
-        (planData.tasks || []).forEach((t, i) => {
-            html += `
-                <div class="task-item">
-                    <div class="task-check ${t.done ? 'done' : ''}" onclick="togglePlanTask(${i})"></div>
-                    <div class="task-text ${t.done ? 'done' : ''}">${esc(t.text)}</div>
-                    <button onclick="deletePlanTask(${i})" style="background:none; border:none; color:#ef4444; font-size:0.8rem; cursor:pointer;">✕</button>
-                </div>`;
-        });
-        html += `<button class="add-btn" onclick="addPlanTask()">+ Agregar Tarea</button>`;
-        c.innerHTML = html;
-    }
-
-    async function addPlanTask() {
-        const text = prompt('Nueva tarea del dia:');
-        if (!text || !text.trim()) return;
-        planData.tasks.push({ text: text.trim(), done: false });
-        renderPlan();
-        await postJSON('/api/plan', planData);
-    }
-
-    async function togglePlanTask(i) {
-        planData.tasks[i].done = !planData.tasks[i].done;
-        renderPlan();
-        await postJSON('/api/plan', planData);
-    }
-
-    async function deletePlanTask(i) {
-        planData.tasks.splice(i, 1);
-        renderPlan();
-        await postJSON('/api/plan', planData);
-    }
-
-    function renderMetrics() {
-        const c = document.getElementById('metricsContent');
-        const metrics = [
-            { icon: '🟢', label: 'Spotify Listeners', value: metricsData.spotify, color: '#1db954' },
-            { icon: '📸', label: 'Instagram Followers', value: metricsData.instagram, color: '#e91e63' },
-            { icon: '🎵', label: 'TikTok Followers', value: metricsData.tiktok, color: '#00e5ff' },
-            { icon: '▶️', label: 'YouTube Subscribers', value: metricsData.youtube, color: '#ff1744' },
+        // ============ AGENTS ============
+        const AGENTS = [
+            { id: 'smith', name: 'Smith Varela', role: 'Manager', color: '#ff9100', img: 'img/smith.jpg', plans: ['motor','creator','pro','elite'] },
+            { id: 'claudia', name: 'Claudia Matisse', role: 'Branding', color: '#e040fb', img: 'img/claudia.jpg', plans: ['motor','creator','pro','elite'] },
+            { id: 'damian', name: 'Damian La Fonte', role: 'Booking', color: '#ff6d00', img: 'img/damian.jpg', plans: ['pro','elite'] },
+            { id: 'valeria', name: 'Valeria Dominguez', role: 'Styling', color: '#f50057', img: 'img/valeria.jpg', plans: ['creator','pro','elite'] },
+            { id: 'sofia', name: 'Sofia Mendoza', role: 'Fandom', color: '#d500f9', img: 'img/sofia.jpg', plans: ['creator','pro','elite'] },
+            { id: 'marcos', name: 'Marcos Rivera', role: 'Instagram', color: '#e91e63', img: 'img/marcos.jpg', plans: ['creator','pro','elite'] },
+            { id: 'luna', name: 'Luna Salazar', role: 'TikTok', color: '#00e5ff', img: 'img/luna.jpg', plans: ['creator','pro','elite'] },
+            { id: 'daniel', name: 'Daniel Herrera', role: 'YouTube', color: '#ff1744', img: 'img/daniel.jpg', plans: ['creator','pro','elite'] },
+            { id: 'mateo', name: 'Mateo Valenzuela', role: 'Spotify', color: '#1db954', img: 'img/mateo.jpg', plans: ['creator','pro','elite'] },
         ];
-        c.innerHTML = metrics.map(m => `
-            <div class="metric-card">
-                <div class="metric-icon">${m.icon}</div>
-                <div class="metric-info">
-                    <div class="metric-label">${m.label}</div>
-                    <div class="metric-value" style="color:${m.color}">${m.value.toLocaleString()}</div>
+
+        // ============ RECORDER STATE ============
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordings = [];
+        let isRecording = false;
+        let recStartTime = null;
+        let recTimerInterval = null;
+        let currentPlayingAudio = null;
+
+        // ============ PLAN NAMES ============
+        const PLAN_NAMES = { motor: 'Plan Motor', creator: 'Plan Creator', pro: 'Plan Pro', elite: 'Plan Elite' };
+
+        // ============ VIEW NAVIGATION ============
+        const viewLoaders = {
+            'tareasDiaView': fetchTareasApp,
+            'dreamTeamView': renderDreamTeam,
+            'produccionesView': fetchPipeline,
+            'grabadoraView': renderGrabadora,
+            'equipoView': fetchEquipo,
+            'ideasView': fetchIdeas,
+            'fandomView': fetchFandom,
+        };
+
+        function openView(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+            window.history.pushState({ view: id }, '', '#' + id);
+            if (viewLoaders[id]) viewLoaders[id]();
+        }
+
+        function closeView(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+            if (id === 'tareasDiaView' && clockInterval) { clearInterval(clockInterval); clockInterval = null; }
+        }
+
+        window.addEventListener('popstate', () => {
+            document.querySelectorAll('.view-modal.active').forEach(m => m.classList.remove('active'));
+            document.body.style.overflow = '';
+        });
+
+        // ============ PROFILE ============
+        async function fetchArtist() {
+            const data = await getJSON('/api/artist');
+            if (data) {
+                artistData = data;
+                updateProfileUI();
+            }
+        }
+
+        function updateProfileUI() {
+            const img = document.getElementById('profileImg');
+            const name = document.getElementById('profileName');
+            const role = document.getElementById('profileRole');
+            if (artistData.photo) img.src = artistData.photo;
+            if (artistData.name) name.textContent = artistData.name;
+            role.textContent = PLAN_NAMES[artistData.plan] || 'Plan Motor';
+        }
+
+        function openProfileModal() {
+            document.getElementById('pf_name').value = artistData.name || '';
+            document.getElementById('pf_photo').value = artistData.photo || '';
+            document.getElementById('pf_plan').value = artistData.plan || 'motor';
+            document.getElementById('pf_recday').value = artistData.recording_day || '';
+            document.getElementById('pf_rhythm').value = artistData.rhythm || 'enfocado';
+            document.getElementById('profileModal').classList.add('active');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.remove('active');
+        }
+
+        async function saveProfile() {
+            artistData.name = gv('pf_name');
+            artistData.photo = gv('pf_photo');
+            artistData.plan = document.getElementById('pf_plan').value;
+            artistData.recording_day = document.getElementById('pf_recday').value;
+            artistData.rhythm = document.getElementById('pf_rhythm').value;
+            updateProfileUI();
+            closeProfileModal();
+            await postJSON('/api/artist', artistData);
+        }
+
+        // ============ CORE DATA FETCH ============
+        async function fetchData() {
+            document.body.classList.add('syncing');
+            try {
+                await fetchArtist();
+                const leadRes = await fetch('/api/leads');
+                const leadData = await leadRes.json();
+                if (Array.isArray(leadData)) { fandomData = leadData; renderFandom(leadData); }
+                const promptRes = await fetch('/api/prompts');
+                const promptData = await promptRes.json();
+                if (Array.isArray(promptData)) { promptsData = promptData; renderPrompts(promptData); }
+            } catch (err) { console.error("Error sincronizando:", err); }
+            finally { document.body.classList.remove('syncing'); }
+        }
+
+        function renderFandom(leads) {
+            const c = document.getElementById('fandomContainer');
+            const c2 = document.getElementById('fandomFullContainer');
+            if (!leads || leads.length === 0) return;
+            const html = leads.map(l => `
+                <div class="lead-card">
+                    <div class="lead-info"><b>${esc(l.name || 'Fan')}</b><br><span>${esc(l.source || 'Instagram')}</span></div>
+                    <div class="lead-time">${esc(l.time || '--:--')}</div>
+                </div>`).join('');
+            c.innerHTML = html;
+            if (c2) c2.innerHTML = html;
+        }
+
+        async function fetchFandom() {
+            const data = await getJSON('/api/leads');
+            if (Array.isArray(data)) { fandomData = data; renderFandom(data); }
+            const statsEl = document.getElementById('fandomStats');
+            const total = fandomData.length;
+            const today = fandomData.filter(l => l.time).length;
+            statsEl.innerHTML = `
+                <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Total Fans</div></div>
+                <div class="stat-card"><div class="stat-value">${today}</div><div class="stat-label">Recientes</div></div>
+            `;
+        }
+
+        function renderPrompts(prompts) {
+            const c = document.getElementById('promptsContainer');
+            if (!Array.isArray(prompts) || prompts.length === 0) {
+                c.innerHTML = '<div class="empty-state">No hay prompts guardados.</div>';
+                return;
+            }
+            c.innerHTML = prompts.map(p => `
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <div class="prompt-title">${esc(p.title)}</div>
+                        <button class="copy-btn" onclick="copyPrompt(event, '${encodeURIComponent(p.content)}')">Copiar</button>
+                    </div>
+                    <div class="prompt-preview">${esc(p.content)}</div>
+                </div>`).join('');
+        }
+
+        // ============ TAREAS APP ============
+        const TAREAS_SECTIONS_ORIG = {
+            semana: { name_es: 'Tareas del Dia', name_en: "Today's Tasks", logrosName_es: 'Logros del Dia', logrosName_en: "Today's Achievements", icon: '📅', prompt_es: 'Nueva tarea del dia:', prompt_en: "New today's task:", logrosPrompt_es: 'Nuevo logro del dia:', logrosPrompt_en: "New today's achievement:" },
+            mes: { name_es: 'Tareas de la Semana', name_en: 'Weekly Tasks', logrosName_es: 'Logros de la Semana', logrosName_en: 'Weekly Achievements', icon: '🗓️', prompt_es: 'Nueva tarea de la semana:', prompt_en: 'New weekly task:', logrosPrompt_es: 'Nuevo logro de la semana:', logrosPrompt_en: 'New weekly achievement:' },
+            ano12: { name_es: 'Ano de 12 Semanas', name_en: '12-Week Year', logrosName_es: 'Logros Ano de 12 Semanas', logrosName_en: '12-Week Year Achievements', icon: '🔥', prompt_es: 'Nueva meta / tarea del ano de 12 semanas:', prompt_en: 'New 12-week year goal/task:', logrosPrompt_es: 'Nuevo logro del ano de 12 semanas:', logrosPrompt_en: 'New 12-week year achievement:' },
+        };
+
+        Object.defineProperty(window, 'TAREAS_SECTIONS_DYNAMIC', {
+            get() {
+                const result = {};
+                for (const [key, val] of Object.entries(TAREAS_SECTIONS_ORIG)) {
+                    result[key] = {
+                        name: val[`name_${currentLang}`],
+                        logrosName: val[`logrosName_${currentLang}`],
+                        icon: val.icon,
+                        prompt: val[`prompt_${currentLang}`],
+                        logrosPrompt: val[`logrosPrompt_${currentLang}`],
+                    };
+                }
+                return result;
+            }
+        });
+
+        function startClock() {
+            function tick() {
+                const now = new Date();
+                const timeEl = document.getElementById('clockTime');
+                const dateEl = document.getElementById('clockDate');
+                if (timeEl) {
+                    let hr = now.getHours();
+                    const ampm = hr >= 12 ? 'PM' : 'AM';
+                    hr = hr % 12 || 12;
+                    const m = now.getMinutes().toString().padStart(2, '0');
+                    const s = now.getSeconds().toString().padStart(2, '0');
+                    timeEl.textContent = `${hr}:${m}:${s} ${ampm}`;
+                }
+                if (dateEl) {
+                    if (currentLang === 'en') {
+                        const dias = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                        const meses = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                        dateEl.textContent = `${dias[now.getDay()]}, ${meses[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+                    } else {
+                        const dias = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+                        const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+                        dateEl.textContent = `${dias[now.getDay()]} ${now.getDate()} de ${meses[now.getMonth()]}, ${now.getFullYear()}`;
+                    }
+                }
+            }
+            tick();
+            if (clockInterval) clearInterval(clockInterval);
+            clockInterval = setInterval(tick, 1000);
+        }
+
+        async function fetchTareasApp() {
+            tareasAppData = await getJSON('/api/tareas-app');
+            if (!tareasAppData || !tareasAppData.semana) tareasAppData = { semana: [], mes: [], ano12: [], logros_semana: [], logros_mes: [], logros_ano12: [] };
+            if (!tareasAppData.logros_semana) tareasAppData.logros_semana = [];
+            if (!tareasAppData.logros_mes) tareasAppData.logros_mes = [];
+            if (!tareasAppData.logros_ano12) tareasAppData.logros_ano12 = [];
+            currentTareasSection = null;
+            startClock();
+            renderTareasHub();
+        }
+
+        function renderTareasHub() {
+            document.getElementById('tareasCardsHub').style.display = 'block';
+            document.getElementById('tareasSubView').style.display = 'none';
+            const word = currentLang === 'en' ? 'tasks' : 'tareas';
+            const sb = document.getElementById('tareasSemanaBadge');
+            const mb = document.getElementById('tareasMesBadge');
+            const ab = document.getElementById('tareasAno12Badge');
+            if (sb) sb.textContent = `${tareasAppData.semana.length} ${word}`;
+            if (mb) mb.textContent = `${tareasAppData.mes.length} ${word}`;
+            if (ab) ab.textContent = `${tareasAppData.ano12.length} ${word}`;
+            document.querySelectorAll('#tareasCardsHub .vibe-card').forEach(el => {
+                el.addEventListener('touchstart', () => el.classList.add('glow'), { passive: true });
+                el.addEventListener('touchend', () => setTimeout(() => el.classList.remove('glow'), 200));
+                el.addEventListener('touchcancel', () => el.classList.remove('glow'));
+            });
+        }
+
+        function openTareasSection(tipo) {
+            currentTareasSection = tipo;
+            currentTareasTab = 'tareas';
+            const sec = TAREAS_SECTIONS_DYNAMIC[tipo];
+            document.getElementById('tareasCardsHub').style.display = 'none';
+            document.getElementById('tareasSubView').style.display = 'block';
+            document.getElementById('tareasSubIcon').textContent = sec.icon;
+            document.getElementById('tareasSubName').textContent = sec.name;
+            switchTareasTab('tareas');
+            initSwipeGesture();
+        }
+
+        function closeTareasSection() { currentTareasSection = null; renderTareasHub(); }
+
+        function switchTareasTab(tab) {
+            currentTareasTab = tab;
+            const track = document.getElementById('tareasSwipeTrack');
+            const tabTareas = document.getElementById('tabTareas');
+            const tabLogros = document.getElementById('tabLogros');
+            const sec = TAREAS_SECTIONS_DYNAMIC[currentTareasSection];
+            const nameEl = document.getElementById('tareasSubName');
+            if (tab === 'tareas') {
+                track.style.transform = 'translateX(0)';
+                tabTareas.style.background = 'var(--accent)'; tabTareas.style.color = '#fff';
+                tabLogros.style.background = 'transparent'; tabLogros.style.color = 'var(--text-dim)';
+                if (nameEl) nameEl.textContent = sec.name;
+            } else {
+                track.style.transform = 'translateX(-50%)';
+                tabLogros.style.background = 'var(--accent2)'; tabLogros.style.color = '#fff';
+                tabTareas.style.background = 'transparent'; tabTareas.style.color = 'var(--text-dim)';
+                if (nameEl) nameEl.textContent = sec.logrosName;
+            }
+            renderTareaList();
+            renderLogroList();
+        }
+
+        function initSwipeGesture() {
+            const container = document.getElementById('tareasSwipeContainer');
+            let startX = 0; let isDragging = false;
+            container.ontouchstart = (e) => { startX = e.touches[0].clientX; isDragging = true; };
+            container.ontouchmove = (e) => {};
+            container.ontouchend = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                const diff = e.changedTouches[0].clientX - startX;
+                if (Math.abs(diff) > 60) {
+                    if (diff < 0 && currentTareasTab === 'tareas') switchTareasTab('logros');
+                    else if (diff > 0 && currentTareasTab === 'logros') switchTareasTab('tareas');
+                }
+            };
+        }
+
+        function renderTareaList() {
+            const c = document.getElementById('tareasSubList');
+            if (!currentTareasSection) return;
+            const tareas = tareasAppData[currentTareasSection] || [];
+            if (tareas.length === 0) {
+                c.innerHTML = `<div style="text-align:center; padding:30px; opacity:0.3; font-size:0.85rem;">${currentLang === 'en' ? 'No tasks' : 'Sin tareas'}</div>`;
+                return;
+            }
+            c.innerHTML = tareas.map((t, i) => `
+                <div class="task-card ${t.done ? 'completed' : ''}" style="display:flex; align-items:center; gap:8px;">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <button onclick="moveTarea('${currentTareasSection}', ${i}, -1)" style="background:none; border:none; color:${i === 0 ? 'rgba(255,255,255,0.1)' : 'var(--accent)'}; font-size:0.7rem; cursor:pointer; padding:2px 4px;" ${i === 0 ? 'disabled' : ''}>▲</button>
+                        <button onclick="moveTarea('${currentTareasSection}', ${i}, 1)" style="background:none; border:none; color:${i === tareas.length - 1 ? 'rgba(255,255,255,0.1)' : 'var(--accent)'}; font-size:0.7rem; cursor:pointer; padding:2px 4px;" ${i === tareas.length - 1 ? 'disabled' : ''}>▼</button>
+                    </div>
+                    <div class="checkbox" onclick="toggleTareaApp('${currentTareasSection}', ${i})" style="cursor:pointer;"></div>
+                    <div class="task-text" style="flex:1; ${t.done ? 'text-decoration:line-through; opacity:0.4;' : ''}">${esc(t.text)}</div>
+                    <button onclick="editTareaApp('${currentTareasSection}', ${i})" style="background:none; border:none; color:var(--text-dim); font-size:0.8rem; cursor:pointer;">✏️</button>
+                    <button onclick="deleteTareaApp('${currentTareasSection}', ${i})" style="background:none; border:none; color:#ef4444; font-size:0.8rem; cursor:pointer;">🗑️</button>
                 </div>
+            `).join('');
+        }
+
+        function renderLogroList() {
+            const c = document.getElementById('logrosSubList');
+            if (!currentTareasSection) return;
+            const logrosKey = 'logros_' + currentTareasSection;
+            const logros = tareasAppData[logrosKey] || [];
+            if (logros.length === 0) {
+                c.innerHTML = `<div style="text-align:center; padding:30px; opacity:0.3; font-size:0.85rem;">${currentLang === 'en' ? 'No achievements recorded' : 'Sin logros registrados'}</div>`;
+                return;
+            }
+            c.innerHTML = logros.map((l, i) => `
+                <div class="task-card" style="display:flex; align-items:center; gap:8px; border-left:3px solid var(--accent2);">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <button onclick="moveLogro('${currentTareasSection}', ${i}, -1)" style="background:none; border:none; color:${i === 0 ? 'rgba(255,255,255,0.1)' : 'var(--accent2)'}; font-size:0.7rem; cursor:pointer; padding:2px 4px;" ${i === 0 ? 'disabled' : ''}>▲</button>
+                        <button onclick="moveLogro('${currentTareasSection}', ${i}, 1)" style="background:none; border:none; color:${i === logros.length - 1 ? 'rgba(255,255,255,0.1)' : 'var(--accent2)'}; font-size:0.7rem; cursor:pointer; padding:2px 4px;" ${i === logros.length - 1 ? 'disabled' : ''}>▼</button>
+                    </div>
+                    <div style="font-size:1.1rem;">🏆</div>
+                    <div class="task-text" style="flex:1;">${esc(l.text)}</div>
+                    <div style="font-size:0.6rem; color:var(--text-dim);">${l.date || ''}</div>
+                    <button onclick="editLogroApp('${currentTareasSection}', ${i})" style="background:none; border:none; color:var(--text-dim); font-size:0.8rem; cursor:pointer;">✏️</button>
+                    <button onclick="deleteLogroApp('${currentTareasSection}', ${i})" style="background:none; border:none; color:#ef4444; font-size:0.8rem; cursor:pointer;">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        async function moveTarea(tipo, index, direction) {
+            const arr = tareasAppData[tipo]; const newIdx = index + direction;
+            if (newIdx < 0 || newIdx >= arr.length) return;
+            [arr[index], arr[newIdx]] = [arr[newIdx], arr[index]];
+            renderTareaList(); await saveTareasApp();
+        }
+
+        async function moveLogro(tipo, index, direction) {
+            const key = 'logros_' + tipo; const arr = tareasAppData[key]; const newIdx = index + direction;
+            if (newIdx < 0 || newIdx >= arr.length) return;
+            [arr[index], arr[newIdx]] = [arr[newIdx], arr[index]];
+            renderLogroList(); await saveTareasApp();
+        }
+
+        async function saveTareasApp() { await postJSON('/api/tareas-app', tareasAppData); }
+
+        async function addTareaApp(tipo) {
+            const sec = TAREAS_SECTIONS_DYNAMIC[tipo];
+            const text = prompt(sec ? sec.prompt : 'Nueva tarea:');
+            if (!text || !text.trim()) return;
+            tareasAppData[tipo].push({ text: text.trim(), done: false });
+            renderTareaList(); await saveTareasApp();
+        }
+
+        async function toggleTareaApp(tipo, index) {
+            tareasAppData[tipo][index].done = !tareasAppData[tipo][index].done;
+            renderTareaList(); await saveTareasApp();
+        }
+
+        async function editTareaApp(tipo, index) {
+            const t = tareasAppData[tipo][index];
+            const text = prompt(currentLang === 'en' ? 'Edit task:' : 'Editar tarea:', t.text);
+            if (text === null || !text.trim()) return;
+            tareasAppData[tipo][index].text = text.trim();
+            renderTareaList(); await saveTareasApp();
+        }
+
+        async function deleteTareaApp(tipo, index) {
+            if (!confirm(currentLang === 'en' ? 'Delete this task?' : 'Eliminar esta tarea?')) return;
+            tareasAppData[tipo].splice(index, 1);
+            renderTareaList(); await saveTareasApp();
+        }
+
+        async function addLogroApp(tipo) {
+            const sec = TAREAS_SECTIONS_DYNAMIC[tipo];
+            const text = prompt(sec ? sec.logrosPrompt : 'Nuevo logro:');
+            if (!text || !text.trim()) return;
+            const key = 'logros_' + tipo;
+            if (!tareasAppData[key]) tareasAppData[key] = [];
+            tareasAppData[key].push({ text: text.trim(), date: new Date().toISOString().split('T')[0] });
+            renderLogroList(); await saveTareasApp();
+        }
+
+        async function editLogroApp(tipo, index) {
+            const key = 'logros_' + tipo; const l = tareasAppData[key][index];
+            const text = prompt(currentLang === 'en' ? 'Edit achievement:' : 'Editar logro:', l.text);
+            if (text === null || !text.trim()) return;
+            tareasAppData[key][index].text = text.trim();
+            renderLogroList(); await saveTareasApp();
+        }
+
+        async function deleteLogroApp(tipo, index) {
+            if (!confirm(currentLang === 'en' ? 'Delete this achievement?' : 'Eliminar este logro?')) return;
+            const key = 'logros_' + tipo;
+            tareasAppData[key].splice(index, 1);
+            renderLogroList(); await saveTareasApp();
+        }
+
+        // ============ DREAM TEAM ============
+        function renderDreamTeam() {
+            const c = document.getElementById('dreamTeamContent');
+            const plan = artistData.plan || 'motor';
+            let html = `<div style="text-align:center; margin-bottom:20px;">
+                <div style="font-size:1.1rem; font-weight:800;">${currentLang === 'en' ? 'Your AI Team' : 'Tu Equipo AI'}</div>
+                <div style="font-size:0.75rem; color:var(--text-dim); margin-top:4px;">${PLAN_NAMES[plan]}</div>
             </div>
-        `).join('');
-    }
+            <div class="agents-grid">`;
+            AGENTS.forEach(a => {
+                const available = a.plans.includes(plan);
+                html += `
+                    <div class="agent-card ${available ? '' : 'locked'}" onclick="${available ? `openAgentDetail('${a.id}')` : ''}" style="border-color: ${available ? a.color + '33' : 'var(--card-border)'};">
+                        <img class="agent-photo" src="${a.img}" alt="${a.name}" onerror="this.src='img/banner.jpg'">
+                        <div class="agent-name">${a.name}</div>
+                        <div class="agent-role" style="color:${a.color};">${a.role}</div>
+                    </div>`;
+            });
+            html += '</div>';
+            c.innerHTML = html;
+        }
 
-    function renderProfile() {
-        const c = document.getElementById('profileContent');
-        c.innerHTML = `
-            <div style="text-align:center; margin-bottom:24px;">
-                <img src="${artistData.photo || 'img/banner.jpg'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--accent);">
-                <div style="font-size:1.2rem; font-weight:900; margin-top:12px;">${esc(artistData.name)}</div>
-                <div class="artist-plan-badge badge-${artistData.plan}" style="display:inline-block; margin-top:6px;">${PLAN_NAMES[artistData.plan]}</div>
-            </div>
-            <div style="margin-bottom:16px;">
-                <label style="font-size:0.7rem; color:var(--text-dim); font-weight:700;">NOMBRE ARTISTICO</label>
-                <input id="pf_name" value="${esc(artistData.name)}" style="width:100%; padding:12px; margin-top:6px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; color:#fff; font-family:inherit; font-size:0.85rem;">
-            </div>
-            <div style="margin-bottom:16px;">
-                <label style="font-size:0.7rem; color:var(--text-dim); font-weight:700;">DIA DE GRABACION</label>
-                <select id="pf_recday" style="width:100%; padding:12px; margin-top:6px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; color:#fff; font-family:inherit; font-size:0.85rem;">
-                    ${['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'].map(d => `<option value="${d}" ${artistData.recording_day === d ? 'selected' : ''}>${d}</option>`).join('')}
-                </select>
-            </div>
-            <div style="margin-bottom:16px;">
-                <label style="font-size:0.7rem; color:var(--text-dim); font-weight:700;">PLAN ACTUAL</label>
-                <select id="pf_plan" style="width:100%; padding:12px; margin-top:6px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; color:#fff; font-family:inherit; font-size:0.85rem;">
-                    ${PLAN_ORDER.map(p => `<option value="${p}" ${artistData.plan === p ? 'selected' : ''}>${PLAN_NAMES[p]} (${PLAN_PRICES[p]}/mes)</option>`).join('')}
-                </select>
-            </div>
-            <button onclick="saveProfile()" style="width:100%; padding:14px; background:linear-gradient(135deg, var(--accent), #7c3aed); border:none; border-radius:14px; color:#fff; font-weight:800; font-size:0.9rem; cursor:pointer; font-family:inherit;">Guardar Cambios</button>
-        `;
-    }
+        function openAgentDetail(id) {
+            const a = AGENTS.find(x => x.id === id);
+            if (!a) return;
+            document.getElementById('agentDetailTitle').textContent = a.name;
+            const c = document.getElementById('agentDetailContent');
+            c.innerHTML = `
+                <div style="text-align:center; margin-bottom:24px;">
+                    <img src="${a.img}" alt="${a.name}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid ${a.color}; margin-bottom:12px;" onerror="this.src='img/banner.jpg'">
+                    <div style="font-size:1.3rem; font-weight:900; color:#fff;">${a.name}</div>
+                    <div style="font-size:0.85rem; font-weight:700; color:${a.color}; margin-top:4px;">${a.role}</div>
+                </div>
+                <div class="v2-card">
+                    <div class="v2-card-title">${currentLang === 'en' ? 'About' : 'Acerca de'}</div>
+                    <div class="v2-card-sub" style="margin-top:8px;">${currentLang === 'en' ? `${a.name} is your AI ${a.role} agent. They help you manage your ${a.role.toLowerCase()} strategy and execution.` : `${a.name} es tu agente AI de ${a.role}. Te ayuda a gestionar tu estrategia y ejecucion de ${a.role.toLowerCase()}.`}</div>
+                </div>
+                <div class="v2-card">
+                    <div class="v2-card-title">${currentLang === 'en' ? 'Available in Plans' : 'Disponible en Planes'}</div>
+                    <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                        ${a.plans.map(p => `<span class="status-pill" style="background:rgba(168,85,247,0.15); color:#c084fc;">${p}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            openView('agentDetailView');
+        }
 
-    async function saveProfile() {
-        artistData.name = document.getElementById('pf_name').value.trim() || 'Artista';
-        artistData.recording_day = document.getElementById('pf_recday').value;
-        artistData.plan = document.getElementById('pf_plan').value;
-        updateArtistUI();
-        await postJSON('/api/artist', artistData);
-        closeView('profileView');
-    }
+        // ============ PRODUCCIONES ============
+        const PIPE_STAGES = {
+            compositores: ['lead', 'escritura', 'produccion', 'grabacion', 'mezcla', 'master', 'lanzado'],
+            producciones: ['planificado', 'en_progreso', 'revision', 'completado'],
+            videoclips: ['planificado', 'en_progreso', 'revision', 'completado']
+        };
 
-    // ============ NAV ============
-    function navTo(section) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-        if (section === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+        async function fetchPipeline() {
+            pipelineData = await getJSON('/api/pipeline');
+            if (!pipelineData) pipelineData = { compositores: [], producciones: [], videoclips: [] };
+            renderPipeline();
+        }
 
-    // ============ TOUCH GLOW ============
-    document.querySelectorAll('.mod-card, .rhythm-card, .alert-banner').forEach(el => {
-        el.addEventListener('touchstart', () => el.classList.add('glow'), { passive: true });
-        el.addEventListener('touchend', () => setTimeout(() => el.classList.remove('glow'), 200));
-        el.addEventListener('touchcancel', () => el.classList.remove('glow'));
-    });
+        function renderPipeline() {
+            const c = document.getElementById('pipelineContent');
+            const tabs = ['compositores', 'producciones', 'videoclips'];
+            const tabLabels = { compositores: 'Compositores', producciones: 'Producciones', videoclips: 'Videoclips' };
+            let html = `<div class="tab-nav">${tabs.map(t =>
+                `<button class="tab-btn ${currentPipeTab === t ? 'active' : ''}" onclick="currentPipeTab='${t}'; renderPipeline()">${tabLabels[t]}</button>`
+            ).join('')}</div>`;
+            html += `<div class="add-form" id="pipeAddForm">${renderPipeForm()}</div>`;
+            const items = pipelineData[currentPipeTab] || [];
+            if (items.length === 0) {
+                html += '<div class="empty-state">No hay items en esta seccion</div>';
+            } else {
+                items.forEach(item => {
+                    const stageKey = currentPipeTab === 'compositores' ? 'stage' : 'status';
+                    const stages = PIPE_STAGES[currentPipeTab];
+                    html += `
+                        <div class="v2-card">
+                            <div class="v2-card-row">
+                                <div class="v2-card-title">${esc(item.name || item.artist)}</div>
+                                <button class="delete-btn" onclick="deletePipeItem(${item.id})">✕</button>
+                            </div>
+                            <div class="v2-card-sub">${esc(item.song || item.track || '')}</div>
+                            <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                <select class="status-pill pill-${item[stageKey]} stage-select" onchange="updatePipeStage(${item.id}, this.value)">
+                                    ${stages.map(s => `<option value="${s}" ${item[stageKey] === s ? 'selected' : ''}>${s.replace('_', ' ')}</option>`).join('')}
+                                </select>
+                                <span style="font-size:0.7rem; color:var(--text-dim);">${item.deadline || item.date || ''}</span>
+                            </div>
+                            ${item.notes ? `<div style="font-size:0.78rem; color:var(--text-dim); margin-top:8px;">${esc(item.notes)}</div>` : ''}
+                            ${item.producer ? `<div style="font-size:0.72rem; color:var(--accent); margin-top:4px;">Prod: ${esc(item.producer)}</div>` : ''}
+                            ${item.director ? `<div style="font-size:0.72rem; color:var(--accent); margin-top:4px;">Dir: ${esc(item.director)}</div>` : ''}
+                        </div>`;
+                });
+            }
+            html += `<button class="fab-add" onclick="toggleForm('pipeAddForm')">+</button>`;
+            c.innerHTML = html;
+        }
 
-    // ============ INIT ============
-    async function init() {
-        const a = await getJSON('/api/artist');
-        if (a && a.name) artistData = a;
-        const p = await getJSON('/api/plan');
-        if (p && p.tasks) planData = p;
-        const m = await getJSON('/api/metrics');
-        if (m && m.spotify !== undefined) metricsData = m;
+        function renderPipeForm() {
+            if (currentPipeTab === 'compositores') {
+                return `<input class="form-input" id="ppf_name" placeholder="Nombre artista">
+                    <input class="form-input" id="ppf_song" placeholder="Cancion">
+                    <input class="form-input" id="ppf_deadline" placeholder="Deadline (YYYY-MM-DD)">
+                    <input class="form-input" id="ppf_notes" placeholder="Notas">
+                    <button class="action-btn" onclick="addPipeItem()">Agregar</button>`;
+            } else if (currentPipeTab === 'producciones') {
+                return `<input class="form-input" id="ppf_artist" placeholder="Artista">
+                    <input class="form-input" id="ppf_track" placeholder="Track">
+                    <input class="form-input" id="ppf_deadline" placeholder="Deadline (YYYY-MM-DD)">
+                    <input class="form-input" id="ppf_producer" placeholder="Productor">
+                    <button class="action-btn" onclick="addPipeItem()">Agregar</button>`;
+            } else {
+                return `<input class="form-input" id="ppf_artist" placeholder="Artista">
+                    <input class="form-input" id="ppf_track" placeholder="Track">
+                    <input class="form-input" id="ppf_director" placeholder="Director">
+                    <input class="form-input" id="ppf_date" placeholder="Fecha (YYYY-MM-DD)">
+                    <button class="action-btn" onclick="addPipeItem()">Agregar</button>`;
+            }
+        }
 
-        updateArtistUI();
-        rotateQuote();
-        setInterval(rotateQuote, 7000);
-    }
-    init();
-</script>
+        async function addPipeItem() {
+            const tab = currentPipeTab; let item;
+            if (tab === 'compositores') {
+                item = { id: Date.now(), name: gv('ppf_name'), song: gv('ppf_song'), stage: 'lead', deadline: gv('ppf_deadline'), notes: gv('ppf_notes') };
+            } else if (tab === 'producciones') {
+                item = { id: Date.now(), artist: gv('ppf_artist'), track: gv('ppf_track'), status: 'planificado', deadline: gv('ppf_deadline'), producer: gv('ppf_producer') };
+            } else {
+                item = { id: Date.now(), artist: gv('ppf_artist'), track: gv('ppf_track'), status: 'planificado', director: gv('ppf_director'), date: gv('ppf_date') };
+            }
+            pipelineData[tab].push(item);
+            renderPipeline(); await postJSON('/api/pipeline', pipelineData);
+        }
+
+        async function updatePipeStage(id, newStage) {
+            const stageKey = currentPipeTab === 'compositores' ? 'stage' : 'status';
+            const item = pipelineData[currentPipeTab].find(x => x.id === id);
+            if (item) item[stageKey] = newStage;
+            renderPipeline(); await postJSON('/api/pipeline', pipelineData);
+        }
+
+        async function deletePipeItem(id) {
+            pipelineData[currentPipeTab] = pipelineData[currentPipeTab].filter(x => x.id !== id);
+            renderPipeline(); await postJSON('/api/pipeline', pipelineData);
+        }
+
+        // ============ GRABADORA ============
+        function renderGrabadora() {
+            const c = document.getElementById('grabadoraContent');
+            let html = `
+                <div class="recorder-section">
+                    <div class="rec-status" id="recStatus">${currentLang === 'en' ? 'Tap to record' : 'Toca para grabar'}</div>
+                    <div class="rec-timer" id="recTimer">0:00</div>
+                    <button class="rec-btn" id="recBtn" onclick="toggleRecording()">
+                        <span id="recIcon">⏺</span>
+                    </button>
+                </div>
+                <div class="section-header" data-es="Grabaciones" data-en="Recordings">${currentLang === 'en' ? 'Recordings' : 'Grabaciones'}</div>
+                <div id="recordingsList">`;
+            if (recordings.length === 0) {
+                html += `<div class="empty-state">${currentLang === 'en' ? 'No recordings yet' : 'Sin grabaciones aun'}</div>`;
+            } else {
+                recordings.forEach((r, i) => {
+                    html += `
+                        <div class="recording-item">
+                            <button class="recording-play" onclick="playRecording(${i})" id="playBtn${i}">▶</button>
+                            <div class="recording-info">
+                                <div class="recording-name">${esc(r.name)}</div>
+                                <div class="recording-meta">${r.date} · ${r.duration}</div>
+                            </div>
+                            <button onclick="deleteRecording(${i})" style="background:none; border:none; color:#ef4444; font-size:0.9rem; cursor:pointer;">🗑️</button>
+                        </div>`;
+                });
+            }
+            html += '</div>';
+            c.innerHTML = html;
+        }
+
+        async function toggleRecording() {
+            if (isRecording) { stopRecording(); return; }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const elapsed = Math.floor((Date.now() - recStartTime) / 1000);
+                    const mins = Math.floor(elapsed / 60);
+                    const secs = elapsed % 60;
+                    recordings.push({
+                        name: `Idea #${recordings.length + 1}`,
+                        date: new Date().toLocaleDateString(),
+                        duration: `${mins}:${secs.toString().padStart(2, '0')}`,
+                        url: url,
+                        blob: blob
+                    });
+                    stream.getTracks().forEach(t => t.stop());
+                    renderGrabadora();
+                };
+                mediaRecorder.start();
+                isRecording = true;
+                recStartTime = Date.now();
+                const btn = document.getElementById('recBtn');
+                const icon = document.getElementById('recIcon');
+                const status = document.getElementById('recStatus');
+                btn.classList.add('recording');
+                icon.textContent = '⏹';
+                status.textContent = currentLang === 'en' ? 'Recording...' : 'Grabando...';
+                recTimerInterval = setInterval(() => {
+                    const elapsed = Math.floor((Date.now() - recStartTime) / 1000);
+                    const mins = Math.floor(elapsed / 60);
+                    const secs = elapsed % 60;
+                    document.getElementById('recTimer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+                }, 100);
+            } catch (err) {
+                alert(currentLang === 'en' ? 'Microphone access denied' : 'Acceso al microfono denegado');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
+            isRecording = false;
+            clearInterval(recTimerInterval);
+        }
+
+        function playRecording(index) {
+            if (currentPlayingAudio) { currentPlayingAudio.pause(); currentPlayingAudio = null; }
+            const r = recordings[index];
+            const audio = new Audio(r.url);
+            currentPlayingAudio = audio;
+            audio.play();
+            const btn = document.getElementById('playBtn' + index);
+            if (btn) btn.textContent = '⏸';
+            audio.onended = () => { if (btn) btn.textContent = '▶'; currentPlayingAudio = null; };
+        }
+
+        function deleteRecording(index) {
+            if (!confirm(currentLang === 'en' ? 'Delete this recording?' : 'Eliminar esta grabacion?')) return;
+            if (recordings[index].url) URL.revokeObjectURL(recordings[index].url);
+            recordings.splice(index, 1);
+            renderGrabadora();
+        }
+
+        // ============ EQUIPO ============
+        async function fetchEquipo() {
+            equipoData = await getJSON('/api/equipo');
+            if (!equipoData || !Array.isArray(equipoData)) equipoData = [];
+            renderEquipo();
+        }
+
+        function renderEquipo() {
+            const c = document.getElementById('equipoContent');
+            let html = `<div class="add-form" id="equipoAddForm">
+                <input class="form-input" id="ef_name" placeholder="Nombre">
+                <input class="form-input" id="ef_role" placeholder="Rol">
+                <button class="action-btn" onclick="addTeamMember()">Agregar Miembro</button>
+            </div>`;
+            if (!equipoData || equipoData.length === 0) {
+                html += '<div class="empty-state">No hay miembros en el equipo</div>';
+            } else {
+                equipoData.forEach(m => {
+                    const tasks = m.tasks || [];
+                    html += `
+                        <div class="v2-card team-card" id="team-${m.id}">
+                            <div class="v2-card-row" onclick="toggleTeamExpand(${m.id})">
+                                <div>
+                                    <div class="v2-card-title"><span class="team-status-dot ${m.status}"></span>${esc(m.name)}</div>
+                                    <div class="v2-card-sub">${esc(m.role)} · ${tasks.filter(t => !t.done).length} tareas pendientes</div>
+                                </div>
+                                <span style="color:var(--text-dim); font-size:1.2rem;">›</span>
+                            </div>
+                            <div class="team-details">
+                                ${tasks.map((t, i) => `
+                                    <div class="mini-task ${t.done ? 'done' : ''}">
+                                        <div class="mini-checkbox ${t.done ? 'done' : ''}" onclick="event.stopPropagation(); toggleTeamTask(${m.id}, ${i})"></div>
+                                        <span class="mini-task-text">${esc(t.text)}</span>
+                                    </div>
+                                `).join('')}
+                                <div class="add-mini-task">
+                                    <input class="form-input" id="teamtask-${m.id}" placeholder="Nueva tarea..." onclick="event.stopPropagation()">
+                                    <button class="action-btn" style="width:auto; padding:10px 15px;" onclick="event.stopPropagation(); addTeamTask(${m.id})">+</button>
+                                </div>
+                                <textarea class="notes-area" placeholder="Notas..." onclick="event.stopPropagation()" onblur="saveTeamNotes(${m.id}, this.value)">${esc(m.notes || '')}</textarea>
+                                <button class="action-btn secondary" style="margin-top:10px;" onclick="event.stopPropagation(); deleteTeamMember(${m.id})">Eliminar</button>
+                            </div>
+                        </div>`;
+                });
+            }
+            html += `<button class="fab-add" onclick="toggleForm('equipoAddForm')">+</button>`;
+            c.innerHTML = html;
+        }
+
+        function toggleTeamExpand(id) { document.getElementById('team-' + id).classList.toggle('expanded'); }
+
+        async function toggleTeamTask(memberId, taskIndex) {
+            const m = equipoData.find(x => x.id === memberId);
+            if (m && m.tasks[taskIndex]) { m.tasks[taskIndex].done = !m.tasks[taskIndex].done; renderEquipo(); await postJSON('/api/equipo', equipoData); }
+        }
+
+        async function addTeamTask(memberId) {
+            const input = document.getElementById('teamtask-' + memberId);
+            if (!input || !input.value.trim()) return;
+            const m = equipoData.find(x => x.id === memberId);
+            if (m) {
+                m.tasks.push({ text: input.value.trim(), done: false, date: new Date().toISOString().split('T')[0] });
+                renderEquipo(); await postJSON('/api/equipo', equipoData);
+                setTimeout(() => document.getElementById('team-' + memberId)?.classList.add('expanded'), 50);
+            }
+        }
+
+        async function addTeamMember() {
+            const name = gv('ef_name'); if (!name) return;
+            equipoData.push({ id: Date.now(), name, role: gv('ef_role') || 'Team', status: 'activo', tasks: [], notes: '' });
+            renderEquipo(); await postJSON('/api/equipo', equipoData);
+        }
+
+        async function deleteTeamMember(id) {
+            equipoData = equipoData.filter(x => x.id !== id);
+            renderEquipo(); await postJSON('/api/equipo', equipoData);
+        }
+
+        async function saveTeamNotes(id, val) {
+            const m = equipoData.find(x => x.id === id);
+            if (m) { m.notes = val; await postJSON('/api/equipo', equipoData); }
+        }
+
+        // ============ IDEAS ============
+        const IDEA_CATEGORIES = ['todos', 'producto', 'marketing', 'tech', 'contenido', 'alianzas'];
+        const IDEA_PRIORITIES = ['alta', 'media', 'baja'];
+        const IDEA_STATUSES = ['nueva', 'en_evaluacion', 'aprobada', 'descartada'];
+
+        async function fetchIdeas() {
+            ideasData = await getJSON('/api/ideas');
+            if (!ideasData || !Array.isArray(ideasData)) ideasData = [];
+            renderIdeas();
+        }
+
+        function renderIdeas() {
+            const c = document.getElementById('ideasContent');
+            let html = `<div class="tab-nav">${IDEA_CATEGORIES.map(cat =>
+                `<button class="tab-btn ${currentIdeaFilter === cat ? 'active' : ''}" onclick="currentIdeaFilter='${cat}'; renderIdeas()">${cat}</button>`
+            ).join('')}</div>`;
+            html += `<div class="add-form" id="ideasAddForm">
+                <input class="form-input" id="if_title" placeholder="Titulo de la idea">
+                <textarea class="form-input" id="if_desc" placeholder="Descripcion..." style="min-height:80px;"></textarea>
+                <div class="form-row">
+                    <select class="form-input" id="if_cat">${IDEA_CATEGORIES.filter(c => c !== 'todos').map(c => `<option value="${c}">${c}</option>`).join('')}</select>
+                    <select class="form-input" id="if_priority">${IDEA_PRIORITIES.map(p => `<option value="${p}">${p}</option>`).join('')}</select>
+                </div>
+                <button class="action-btn" onclick="addIdea()">Agregar Idea</button>
+            </div>`;
+            let filtered = ideasData || [];
+            if (currentIdeaFilter !== 'todos') filtered = filtered.filter(i => i.category === currentIdeaFilter);
+            if (filtered.length === 0) {
+                html += '<div class="empty-state">No hay ideas en esta categoria</div>';
+            } else {
+                filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+                filtered.forEach(idea => {
+                    html += `
+                        <div class="v2-card">
+                            <div class="v2-card-row">
+                                <div class="v2-card-title">${esc(idea.title)}</div>
+                                <button class="delete-btn" onclick="deleteIdea(${idea.id})">✕</button>
+                            </div>
+                            <div class="v2-card-sub" style="margin-top:6px;">${esc(idea.description || '')}</div>
+                            <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                <span class="status-pill pill-${idea.category}">${idea.category}</span>
+                                <span class="status-pill pill-${idea.priority}">${idea.priority}</span>
+                                <select class="status-pill pill-${idea.status} stage-select" onchange="updateIdeaStatus(${idea.id}, this.value)">
+                                    ${IDEA_STATUSES.map(s => `<option value="${s}" ${idea.status === s ? 'selected' : ''}>${s.replace('_', ' ')}</option>`).join('')}
+                                </select>
+                                <span style="font-size:0.65rem; color:var(--text-dim);">${idea.date}</span>
+                            </div>
+                        </div>`;
+                });
+            }
+            html += `<button class="fab-add" onclick="toggleForm('ideasAddForm')">+</button>`;
+            c.innerHTML = html;
+        }
+
+        async function addIdea() {
+            const title = gv('if_title'); if (!title) return;
+            const idea = { id: Date.now(), title, description: gv('if_desc'), category: document.getElementById('if_cat').value, priority: document.getElementById('if_priority').value, status: 'nueva', date: new Date().toISOString().split('T')[0] };
+            ideasData.unshift(idea); renderIdeas(); await postJSON('/api/ideas', ideasData);
+        }
+
+        async function updateIdeaStatus(id, newStatus) {
+            const idea = ideasData.find(x => x.id === id);
+            if (idea) idea.status = newStatus;
+            renderIdeas(); await postJSON('/api/ideas', ideasData);
+        }
+
+        async function deleteIdea(id) {
+            ideasData = ideasData.filter(x => x.id !== id);
+            renderIdeas(); await postJSON('/api/ideas', ideasData);
+        }
+
+        // ============ COPY PROMPT ============
+        async function copyPrompt(event, encodedContent) {
+            const content = decodeURIComponent(encodedContent);
+            const btn = event.currentTarget || event.target;
+            const showSuccess = () => {
+                const orig = btn.textContent; btn.textContent = 'Listo!'; btn.style.background = 'var(--accent)'; btn.style.color = '#fff';
+                setTimeout(() => { btn.textContent = orig; btn.style.background = 'rgba(168, 85, 247, 0.15)'; btn.style.color = 'var(--accent)'; }, 2000);
+            };
+            if (navigator.clipboard && window.isSecureContext) { try { await navigator.clipboard.writeText(content); showSuccess(); return; } catch (e) {} }
+            if (navigator.share) { try { await navigator.share({ title: 'Prompt', text: content }); showSuccess(); return; } catch (e) {} }
+            const modal = document.getElementById('copyModal');
+            document.getElementById('modalTextDisplay').value = content;
+            modal.classList.add('active');
+        }
+
+        // ============ HELPERS ============
+        function esc(str) { if (!str) return ''; const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
+        function gv(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+        function formatNum(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+        function toggleForm(id) { document.getElementById(id).classList.toggle('visible'); }
+
+        async function getJSON(url) {
+            try { const res = await fetch(url); return await res.json(); } catch (e) { console.error('GET error:', url, e); return null; }
+        }
+
+        async function postJSON(url, data) {
+            document.body.classList.add('syncing');
+            try { await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); }
+            catch (e) { console.error('POST error:', url, e); }
+            finally { document.body.classList.remove('syncing'); }
+        }
+
+        // ============ TOUCH GLOW ============
+        document.querySelectorAll('.vibe-card, .banner-card, .menu-card').forEach(el => {
+            el.addEventListener('touchstart', () => el.classList.add('glow'), { passive: true });
+            el.addEventListener('touchend', () => setTimeout(() => el.classList.remove('glow'), 200));
+            el.addEventListener('touchcancel', () => el.classList.remove('glow'));
+        });
+
+        // ============ LANGUAGE TOGGLE ============
+        let currentLang = localStorage.getItem('pr_lang') || 'es';
+
+        function toggleLang() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            localStorage.setItem('pr_lang', currentLang);
+            applyLang();
+            const btn = document.getElementById('langToggleBtn');
+            btn.textContent = currentLang === 'es' ? 'ES | EN' : 'EN | ES';
+            btn.style.background = currentLang === 'en' ? 'var(--accent)' : 'rgba(255,255,255,0.08)';
+        }
+
+        function applyLang() {
+            document.querySelectorAll('[data-es][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+            if (currentTareasSection) switchTareasTab(currentTareasTab);
+            if (tareasAppData.semana) renderTareasHub();
+        }
+
+        if (currentLang !== 'es') {
+            const btn = document.getElementById('langToggleBtn');
+            btn.textContent = 'EN | ES';
+            btn.style.background = 'var(--accent)';
+            setTimeout(applyLang, 100);
+        }
+
+        // ============ INIT ============
+        fetchData();
+        setInterval(fetchData, 8000);
+    </script>
 </body>
 </html>
