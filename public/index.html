@@ -153,6 +153,7 @@
         .vibe-desc { font-size: 0.7rem; color: rgba(255,255,255,0.7); z-index: 1; line-height: 1.3; }
         .vibe-btn {
             background: rgba(255,255,255,0.2);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border: none;
             color: #fff;
@@ -293,6 +294,7 @@
         .view-header {
             position: sticky; top: 0;
             background: rgba(10, 10, 15, 0.92);
+            -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             padding: 20px;
             display: flex; align-items: center; gap: 14px;
@@ -318,6 +320,7 @@
             position: fixed; top: 0; left: 0;
             width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.85);
+            -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center;
             z-index: 3000;
@@ -665,6 +668,7 @@
             position: fixed; top: 0; left: 0;
             width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.9);
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             z-index: 5000;
             display: flex; justify-content: center; align-items: center;
@@ -967,7 +971,16 @@
     </div>
 
     <script>
-        // ============ GLOBAL STATE ============
+        // ============ ERROR HANDLER (mobile debug) ============
+window.onerror = function(msg, src, line, col, err) {
+    console.error('[POWER RECORDS ERROR]', msg, 'Line:', line, err ? err.stack : '');
+    return false;
+};
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('[POWER RECORDS UNHANDLED PROMISE]', e.reason);
+});
+
+// ============ GLOBAL STATE ============
         let artistData = { name: '', photo: '', plan: 'motor', recording_day: '', rhythm: 'enfocado' };
         let tareasAppData = { semana: [], mes: [], ano12: [], logros_semana: [], logros_mes: [], logros_ano12: [] };
         let pipelineData = null;
@@ -1079,18 +1092,20 @@
 
         // ============ CORE DATA FETCH ============
         async function fetchData() {
-            document.body.classList.add('syncing');
-            try {
-                await fetchArtist();
-                const leadRes = await fetch('/api/leads');
-                const leadData = await leadRes.json();
-                if (Array.isArray(leadData)) { fandomData = leadData; renderFandom(leadData); }
-                const promptRes = await fetch('/api/prompts');
-                const promptData = await promptRes.json();
-                if (Array.isArray(promptData)) { promptsData = promptData; renderPrompts(promptData); }
-            } catch (err) { console.error("Error sincronizando:", err); }
-            finally { document.body.classList.remove('syncing'); }
-        }
+    document.body.classList.add('syncing');
+    try { await fetchArtist(); } catch(e) { console.error('[fetchData] artist error:', e); }
+    try {
+        const leadRes = await fetch('/api/leads');
+        const leadData = await leadRes.json();
+        if (Array.isArray(leadData)) { fandomData = leadData; renderFandom(leadData); }
+    } catch(e) { console.error('[fetchData] leads error:', e); }
+    try {
+        const promptRes = await fetch('/api/prompts');
+        const promptData = await promptRes.json();
+        if (Array.isArray(promptData)) { promptsData = promptData; renderPrompts(promptData); }
+    } catch(e) { console.error('[fetchData] prompts error:', e); }
+    document.body.classList.remove('syncing');
+}
 
         function renderFandom(leads) {
             const c = document.getElementById('fandomContainer');
@@ -1559,7 +1574,15 @@
 
         async function toggleRecording() {
             if (isRecording) { stopRecording(); return; }
-            try {
+            
+    // Feature detection for iOS Safari / older browsers
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
+        alert(currentLang === 'en'
+            ? 'Audio recording is not supported on this browser. Try Chrome or Firefox.'
+            : 'La grabacion de audio no esta disponible en este navegador. Usa Chrome o Firefox.');
+        return;
+    }
+    try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
                 audioChunks = [];
@@ -1687,7 +1710,7 @@
             if (m) {
                 m.tasks.push({ text: input.value.trim(), done: false, date: new Date().toISOString().split('T')[0] });
                 renderEquipo(); await postJSON('/api/equipo', equipoData);
-                setTimeout(() => document.getElementById('team-' + memberId)?.classList.add('expanded'), 50);
+                setTimeout(() => document.getElementById('team-' + memberId).classList.add('expanded'), 50);
             }
         }
 
