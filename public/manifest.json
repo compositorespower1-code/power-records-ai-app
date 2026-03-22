@@ -1,0 +1,15 @@
+{
+  "name": "Power Records AI",
+  "short_name": "PR AI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030308",
+  "theme_color": "#a855f7",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/isometric/512/musical-notes.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

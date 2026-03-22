@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Power Records AI</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#030308">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030308;
+            --card-bg: rgba(255,255,255,0.05);
+            --card-border: rgba(255,255,255,0.07);
+            --text: #ffffff;
+            --text-dim: #6a6a7a;
+            --accent: #a855f7;
+            --accent2: #06d6a0;
+            --accent3: #f97316;
+            --gold: #ffd700;
+            --radius: 20px;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* ============ BANNER ============ */
+        .hero-banner {
+            width: 100%; height: 220px;
+            position: relative; overflow: hidden;
+        }
+        .hero-banner img {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center 30%;
+        }
+        .hero-banner::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
+            background: linear-gradient(to top, var(--bg), transparent);
+        }
+        .hero-logo {
+            position: absolute; bottom: 16px; left: 20px; z-index: 2;
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 3px;
+            color: rgba(255,255,255,0.7); text-transform: uppercase;
+        }
+
+        /* ============ ARTIST PHOTO ============ */
+        .artist-section {
+            display: flex; flex-direction: column; align-items: center;
+            margin-top: -60px; position: relative; z-index: 10;
+        }
+        .artist-photo-wrap {
+            width: 150px; height: 150px; border-radius: 50%;
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .artist-glow {
+            position: absolute; width: 170px; height: 170px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(168,85,247,0.4), transparent 70%);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        .artist-photo {
+            width: 150px; height: 150px; border-radius: 50%;
+            border: 3px solid var(--accent);
+            object-fit: cover; position: relative; z-index: 2;
+            background: #111;
+        }
+        .artist-photo.plan-motor { border-color: #888; }
+        .artist-photo.plan-creator { border-color: #3b82f6; }
+        .artist-photo.plan-pro { border-color: var(--accent); }
+        .artist-photo.plan-elite { border-color: var(--gold); box-shadow: 0 0 30px rgba(255,215,0,0.5); }
+        .crown {
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            font-size: 2rem; z-index: 5; filter: drop-shadow(0 0 8px rgba(255,215,0,0.8));
+            display: none;
+        }
+        .crown.visible { display: block; animation: crownBounce 2s ease-in-out infinite; }
+        @keyframes crownBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-4px); }
+        }
+        .artist-name {
+            font-size: 1.4rem; font-weight: 900; margin-top: 12px;
+            text-align: center; letter-spacing: 0.5px;
+        }
+        .artist-plan-badge {
+            font-size: 0.65rem; font-weight: 700; padding: 4px 14px;
+            border-radius: 20px; margin-top: 6px; text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .badge-motor { background: rgba(136,136,136,0.2); color: #aaa; }
+        .badge-creator { background: rgba(59,130,246,0.2); color: #60a5fa; }
+        .badge-pro { background: rgba(168,85,247,0.2); color: #c084fc; }
+        .badge-elite { background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,165,0,0.3)); color: var(--gold); }
+
+        /* ============ AGENTS ORBIT ============ */
+        .orbit-container {
+            position: relative; width: 320px; height: 320px;
+            margin: 30px auto 10px;
+        }
+        .orbit-center {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px; height: 70px; border-radius: 50%;
+            background: rgba(168,85,247,0.1);
+            border: 2px solid rgba(168,85,247,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .orbit-agent {
+            position: absolute; width: 48px; height: 48px;
+            border-radius: 50%; cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+        }
+        .orbit-agent:active { transform: scale(1.2) !important; }
+        .orbit-agent img {
+            width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+        }
+        .orbit-agent.locked {
+            filter: grayscale(1) brightness(0.4);
+        }
+        .orbit-agent.locked::after {
+            content: '🔒'; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); font-size: 0.9rem;
+        }
+        .orbit-line {
+            position: absolute; background: rgba(255,255,255,0.06);
+            transform-origin: left center; height: 1px;
+        }
+        .orbit-label {
+            position: absolute; font-size: 0.5rem; font-weight: 700;
+            color: var(--text-dim); white-space: nowrap; text-align: center;
+            pointer-events: none;
+        }
+
+        /* ============ MOTIVATIONAL QUOTE ============ */
+        .quote-section {
+            text-align: center; padding: 20px 24px; margin: 10px 16px;
+            background: linear-gradient(135deg, rgba(168,85,247,0.08), rgba(6,214,160,0.05));
+            border-radius: var(--radius); border: 1px solid rgba(168,85,247,0.1);
+        }
+        .quote-text {
+            font-size: 0.85rem; font-style: italic; color: rgba(255,255,255,0.8);
+            line-height: 1.5; min-height: 40px;
+            transition: opacity 0.5s;
+        }
+        .quote-author {
+            font-size: 0.6rem; color: var(--accent); margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* ============ MODULES GRID ============ */
+        .modules-label {
+            font-size: 0.75rem; font-weight: 800; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 2px;
+            margin: 28px 20px 14px;
+        }
+        .modules-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 12px; padding: 0 16px;
+        }
+        .mod-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 20px 14px;
+            text-align: center; cursor: pointer;
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .mod-card:active, .mod-card.glow {
+            border-color: rgba(168,85,247,0.4);
+            box-shadow: 0 0 25px rgba(168,85,247,0.2);
+            background: rgba(255,255,255,0.08);
+        }
+        .mod-card::before {
+            content: ''; position: absolute;
+            top: -40%; right: -40%; width: 100px; height: 100px;
+            background: rgba(255,255,255,0.03); border-radius: 50%;
+        }
+        .mod-icon { font-size: 2rem; margin-bottom: 8px; position: relative; z-index: 1; }
+        .mod-title { font-size: 0.78rem; font-weight: 800; color: #fff; position: relative; z-index: 1; }
+        .mod-sub { font-size: 0.6rem; color: var(--text-dim); margin-top: 4px; position: relative; z-index: 1; }
+
+        /* ============ ALERTS BANNER ============ */
+        .alert-banner {
+            margin: 20px 16px; padding: 16px 18px;
+            background: linear-gradient(135deg, #7c2d12, #9a3412);
+            border-radius: 16px; cursor: pointer;
+            display: flex; align-items: center; gap: 12px;
+            transition: transform 0.2s;
+        }
+        .alert-banner:active { transform: scale(0.98); }
+        .alert-icon { font-size: 1.5rem; }
+        .alert-text { flex: 1; }
+        .alert-title { font-size: 0.85rem; font-weight: 800; }
+        .alert-desc { font-size: 0.7rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+        /* ============ RECORDING DAY ============ */
+        .recording-banner {
+            margin: 12px 16px; padding: 18px;
+            background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(6,214,160,0.1));
+            border: 1px solid rgba(168,85,247,0.2);
+            border-radius: 16px; text-align: center;
+        }
+        .rec-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ef4444; margin-right: 6px; animation: recBlink 1.5s infinite; }
+        @keyframes recBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .rec-title { font-size: 0.85rem; font-weight: 800; }
+        .rec-sub { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
+
+        /* ============ RHYTHM MODES ============ */
+        .rhythm-section { padding: 0 16px; margin: 20px 0; }
+        .rhythm-cards { display: flex; gap: 10px; }
+        .rhythm-card {
+            flex: 1; padding: 14px 8px; border-radius: 14px;
+            text-align: center; cursor: pointer; transition: all 0.3s;
+            border: 1px solid var(--card-border); background: var(--card-bg);
+        }
+        .rhythm-card.active {
+            border-color: var(--accent); background: rgba(168,85,247,0.15);
+            box-shadow: 0 0 20px rgba(168,85,247,0.2);
+        }
+        .rhythm-icon { font-size: 1.3rem; }
+        .rhythm-name { font-size: 0.65rem; font-weight: 800; margin-top: 6px; }
+        .rhythm-time { font-size: 0.55rem; color: var(--text-dim); margin-top: 2px; }
+
+        /* ============ BOTTOM NAV ============ */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(3,3,8,0.95);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex; justify-content: space-around;
+            padding: 8px 0 env(safe-area-inset-bottom, 8px);
+            z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 2px; cursor: pointer; padding: 4px 12px;
+            transition: color 0.2s; color: var(--text-dim);
+        }
+        .nav-item.active { color: var(--accent); }
+        .nav-icon { font-size: 1.2rem; }
+        .nav-label { font-size: 0.55rem; font-weight: 700; }
+
+        /* ============ AGENT PANEL ============ */
+        .agent-panel {
+            position: fixed; bottom: -100%; left: 0; right: 0;
+            background: linear-gradient(to top, #0a0a14, #12121f);
+            border-top-left-radius: 24px; border-top-right-radius: 24px;
+            padding: 24px; z-index: 2000;
+            transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 70vh; overflow-y: auto;
+        }
+        .agent-panel.open { bottom: 0; }
+        .agent-panel-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 1999;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .agent-panel-overlay.open { opacity: 1; pointer-events: all; }
+        .agent-panel-handle {
+            width: 40px; height: 4px; border-radius: 4px;
+            background: rgba(255,255,255,0.2); margin: 0 auto 20px;
+        }
+        .agent-panel-photo {
+            width: 80px; height: 80px; border-radius: 50%;
+            object-fit: cover; margin: 0 auto; display: block;
+        }
+        .agent-panel-name {
+            text-align: center; font-size: 1.1rem; font-weight: 900;
+            margin-top: 12px;
+        }
+        .agent-panel-role {
+            text-align: center; font-size: 0.75rem; color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .agent-panel-btn {
+            display: block; width: 100%; margin-top: 20px;
+            padding: 14px; border: none; border-radius: 14px;
+            font-size: 0.85rem; font-weight: 800; cursor: pointer;
+            font-family: inherit; transition: all 0.3s;
+        }
+        .agent-panel-btn.talk {
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            color: #fff;
+        }
+        .agent-panel-btn.upgrade {
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: #000;
+        }
+
+        /* ============ VIEW MODAL ============ */
+        .view-modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg); z-index: 500;
+            transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+        .view-modal.active { transform: translateX(0); }
+        .view-header {
+            position: sticky; top: 0; z-index: 10;
+            background: var(--bg); padding: 16px 20px;
+            display: flex; align-items: center; gap: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .back-btn {
+            background: none; border: none; color: var(--accent);
+            font-size: 1.3rem; cursor: pointer; padding: 4px;
+        }
+        .view-title { font-size: 1.1rem; font-weight: 800; }
+        .view-content { padding: 20px; padding-bottom: 40px; }
+
+        /* ============ MODULE CARDS ============ */
+        .task-item {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 14px; padding: 14px 16px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .task-check {
+            width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid var(--accent); cursor: pointer;
+            flex-shrink: 0; transition: all 0.2s;
+        }
+        .task-check.done {
+            background: var(--accent);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+            background-size: 14px; background-repeat: no-repeat; background-position: center;
+        }
+        .task-text { flex: 1; font-size: 0.82rem; }
+        .task-text.done { text-decoration: line-through; opacity: 0.4; }
+        .add-btn {
+            display: block; width: 100%; padding: 14px; margin-top: 12px;
+            background: rgba(168,85,247,0.1); border: 1px dashed rgba(168,85,247,0.3);
+            border-radius: 14px; color: var(--accent); font-weight: 700;
+            font-size: 0.8rem; cursor: pointer; font-family: inherit;
+            transition: all 0.3s;
+        }
+        .add-btn:active { background: rgba(168,85,247,0.2); }
+        .metric-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 18px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .metric-icon { font-size: 2rem; }
+        .metric-info { flex: 1; }
+        .metric-label { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; }
+        .metric-value { font-size: 1.3rem; font-weight: 900; margin-top: 2px; }
+
+        /* ============ ANIMATIONS ============ */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeInUp 0.6s ease forwards; }
+        .fade-in-d1 { animation-delay: 0.1s; opacity: 0; }
+        .fade-in-d2 { animation-delay: 0.2s; opacity: 0; }
+        .fade-in-d3 { animation-delay: 0.3s; opacity: 0; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <!-- BANNER -->
+    <div class="hero-banner fade-in">
+        <img src="img/banner.jpg" alt="Power Records AI">
+        <div class="hero-logo">POWER RECORDS AI</div>
+    </div>
+
+    <!-- ARTIST PHOTO -->
+    <div class="artist-section fade-in fade-in-d1">
+        <div class="artist-photo-wrap">
+            <div class="artist-glow" id="artistGlow"></div>
+            <div class="crown" id="artistCrown">👑</div>
+            <img class="artist-photo plan-pro" id="artistPhoto" src="img/banner.jpg" alt="Artist">
+        </div>
+        <div class="artist-name" id="artistName">Tu Nombre</div>
+        <div class="artist-plan-badge badge-pro" id="artistBadge">PRO</div>
+    </div>
+
+    <!-- AGENTS ORBIT -->
+    <div class="orbit-container fade-in fade-in-d2" id="orbitContainer">
+        <div class="orbit-center">🎵</div>
+    </div>
+
+    <!-- MOTIVATIONAL QUOTE -->
+    <div class="quote-section fade-in fade-in-d3">
+        <div class="quote-text" id="quoteText"></div>
+        <div class="quote-author" id="quoteAuthor"></div>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alert-banner fade-in" id="alertBanner" onclick="openView('alertsView')" style="display:none;">
+        <div class="alert-icon">🔔</div>
+        <div class="alert-text">
+            <div class="alert-title" id="alertTitle">Nuevas Oportunidades</div>
+            <div class="alert-desc" id="alertDesc">Convocatorias y becas disponibles</div>
+        </div>
+        <div style="color:rgba(255,255,255,0.5);">›</div>
+    </div>
+
+    <!-- RECORDING DAY -->
+    <div class="recording-banner fade-in" id="recBanner" style="display:none;">
+        <div class="rec-title"><span class="rec-dot"></span> Dia de Grabacion</div>
+        <div class="rec-sub" id="recDetails"></div>
+    </div>
+
+    <!-- RHYTHM MODES -->
+    <div class="rhythm-section fade-in">
+        <div class="modules-label">Modo de Ritmo</div>
+        <div class="rhythm-cards">
+            <div class="rhythm-card" data-rhythm="enfocado" onclick="setRhythm('enfocado')">
+                <div class="rhythm-icon">🎯</div>
+                <div class="rhythm-name">Enfocado</div>
+                <div class="rhythm-time">15 min/dia</div>
+            </div>
+            <div class="rhythm-card" data-rhythm="crecimiento" onclick="setRhythm('crecimiento')">
+                <div class="rhythm-icon">📈</div>
+                <div class="rhythm-name">Crecimiento</div>
+                <div class="rhythm-time">30 min/dia</div>
+            </div>
+            <div class="rhythm-card active" data-rhythm="intenso" onclick="setRhythm('intenso')">
+                <div class="rhythm-icon">🔥</div>
+                <div class="rhythm-name">Intenso</div>
+                <div class="rhythm-time">45 min/dia</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODULES -->
+    <div class="modules-label">Modulos</div>
+    <div class="modules-grid">
+        <div class="mod-card" onclick="openView('planView')">
+            <div class="mod-icon">📋</div>
+            <div class="mod-title">Plan de Hoy</div>
+            <div class="mod-sub">Tareas del dia</div>
+        </div>
+        <div class="mod-card" onclick="openView('metricsView')">
+            <div class="mod-icon">📊</div>
+            <div class="mod-title">Metricas</div>
+            <div class="mod-sub">Crecimiento en plataformas</div>
+        </div>
+        <div class="mod-card" onclick="openView('fandomView')">
+            <div class="mod-icon">💜</div>
+            <div class="mod-title">Fandom</div>
+            <div class="mod-sub">Comunidad de fans</div>
+        </div>
+        <div class="mod-card" onclick="openView('calendarView')">
+            <div class="mod-icon">📅</div>
+            <div class="mod-title">Calendario</div>
+            <div class="mod-sub">Proximos eventos</div>
+        </div>
+        <div class="mod-card" onclick="openView('portfolioView')">
+            <div class="mod-icon">🎶</div>
+            <div class="mod-title">Portfolio</div>
+            <div class="mod-sub">Tracks y videos</div>
+        </div>
+        <div class="mod-card" onclick="openView('vaultView')">
+            <div class="mod-icon">🔐</div>
+            <div class="mod-title">Boveda</div>
+            <div class="mod-sub">Archivos protegidos</div>
+        </div>
+        <div class="mod-card" onclick="openView('resourcesView')">
+            <div class="mod-icon">📚</div>
+            <div class="mod-title">Recursos</div>
+            <div class="mod-sub">Guias y tutoriales</div>
+        </div>
+        <div class="mod-card" onclick="openView('showsView')">
+            <div class="mod-icon">🎤</div>
+            <div class="mod-title">Shows</div>
+            <div class="mod-sub">Presentaciones en vivo</div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="navTo('home')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </div>
+        <div class="nav-item" onclick="openView('planView')">
+            <div class="nav-icon">📋</div>
+            <div class="nav-label">Plan</div>
+        </div>
+        <div class="nav-item" onclick="showAgentPanel(AGENTS[0])">
+            <div class="nav-icon">👥</div>
+            <div class="nav-label">Equipo</div>
+        </div>
+        <div class="nav-item" onclick="openView('metricsView')">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Metricas</div>
+        </div>
+        <div class="nav-item" onclick="openView('profileView')">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Perfil</div>
+        </div>
+    </nav>
+
+    <!-- AGENT PANEL -->
+    <div class="agent-panel-overlay" id="agentOverlay" onclick="closeAgentPanel()"></div>
+    <div class="agent-panel" id="agentPanel">
+        <div class="agent-panel-handle"></div>
+        <img class="agent-panel-photo" id="apPhoto" src="">
+        <div class="agent-panel-name" id="apName"></div>
+        <div class="agent-panel-role" id="apRole"></div>
+        <div id="apAction"></div>
+    </div>
+
+    <!-- VIEW MODALS -->
+    <div class="view-modal" id="planView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('planView')">←</button>
+            <h2 class="view-title">Plan de Hoy</h2>
+        </div>
+        <div class="view-content" id="planContent"></div>
+    </div>
+
+    <div class="view-modal" id="metricsView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('metricsView')">←</button>
+            <h2 class="view-title">Metricas</h2>
+        </div>
+        <div class="view-content" id="metricsContent"></div>
+    </div>
+
+    <div class="view-modal" id="fandomView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('fandomView')">←</button>
+            <h2 class="view-title">Fandom</h2>
+        </div>
+        <div class="view-content" id="fandomContent"></div>
+    </div>
+
+    <div class="view-modal" id="calendarView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('calendarView')">←</button>
+            <h2 class="view-title">Calendario</h2>
+        </div>
+        <div class="view-content" id="calendarContent"></div>
+    </div>
+
+    <div class="view-modal" id="portfolioView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('portfolioView')">←</button>
+            <h2 class="view-title">Portfolio</h2>
+        </div>
+        <div class="view-content" id="portfolioContent"></div>
+    </div>
+
+    <div class="view-modal" id="vaultView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('vaultView')">←</button>
+            <h2 class="view-title">Boveda</h2>
+        </div>
+        <div class="view-content" id="vaultContent"></div>
+    </div>
+
+    <div class="view-modal" id="resourcesView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('resourcesView')">←</button>
+            <h2 class="view-title">Recursos</h2>
+        </div>
+        <div class="view-content" id="resourcesContent"></div>
+    </div>
+
+    <div class="view-modal" id="showsView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('showsView')">←</button>
+            <h2 class="view-title">Shows</h2>
+        </div>
+        <div class="view-content" id="showsContent"></div>
+    </div>
+
+    <div class="view-modal" id="alertsView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('alertsView')">←</button>
+            <h2 class="view-title">Oportunidades</h2>
+        </div>
+        <div class="view-content" id="alertsContent"></div>
+    </div>
+
+    <div class="view-modal" id="profileView">
+        <div class="view-header">
+            <button class="back-btn" onclick="closeView('profileView')">←</button>
+            <h2 class="view-title">Mi Perfil</h2>
+        </div>
+        <div class="view-content" id="profileContent"></div>
+    </div>
+
+<script>
+    // ============ AGENTS CONFIG ============
+    const AGENTS = [
+        { id: 'smith', name: 'Smith Varela', role: 'Manager', color: '#ff9100', img: 'img/smith.jpg', plans: ['motor','creator','pro','elite'] },
+        { id: 'claudia', name: 'Claudia Matisse', role: 'Branding', color: '#e040fb', img: 'img/claudia.jpg', plans: ['motor','creator','pro','elite'] },
+        { id: 'damian', name: 'Damian La Fonte', role: 'Booking', color: '#ff6d00', img: 'img/damian.jpg', plans: ['pro','elite'] },
+        { id: 'valeria', name: 'Valeria Dominguez', role: 'Styling', color: '#f50057', img: 'img/valeria.jpg', plans: ['creator','pro','elite'] },
+        { id: 'sofia', name: 'Sofia Mendoza', role: 'Fandom', color: '#d500f9', img: 'img/sofia.jpg', plans: ['creator','pro','elite'] },
+        { id: 'marcos', name: 'Marcos Rivera', role: 'Instagram', color: '#e91e63', img: 'img/marcos.jpg', plans: ['creator','pro','elite'] },
+        { id: 'luna', name: 'Luna Salazar', role: 'TikTok', color: '#00e5ff', img: 'img/luna.jpg', plans: ['creator','pro','elite'] },
+        { id: 'daniel', name: 'Daniel Herrera', role: 'YouTube', color: '#ff1744', img: 'img/daniel.jpg', plans: ['creator','pro','elite'] },
+        { id: 'mateo', name: 'Mateo Valenzuela', role: 'Spotify', color: '#1db954', img: 'img/mateo.jpg', plans: ['creator','pro','elite'] },
+    ];
+
+    const PLAN_ORDER = ['motor', 'creator', 'pro', 'elite'];
+    const PLAN_NAMES = { motor: 'Motor de Arranque', creator: 'Creator', pro: 'Pro', elite: 'Power Elite' };
+    const PLAN_PRICES = { motor: '$9', creator: '$37', pro: '$97', elite: '$250' };
+
+    // ============ QUOTES ============
+    const QUOTES = [
+        { text: 'La musica que llevas dentro merece ser escuchada por el mundo, [NOMBRE]. No dejes que el miedo detenga tu arte.', author: 'Smith Varela, Manager' },
+        { text: '[NOMBRE], tu marca personal es tu superpoder. Cada detalle cuenta en la industria.', author: 'Claudia Matisse, Branding' },
+        { text: 'Los escenarios te esperan, [NOMBRE]. Cada ensayo te acerca mas a tu primer sold-out.', author: 'Damian La Fonte, Booking' },
+        { text: 'Tu imagen es parte de tu mensaje, [NOMBRE]. Vistete como el artista que estas destinado a ser.', author: 'Valeria Dominguez, Styling' },
+        { text: '[NOMBRE], tus fans son tu familia musical. Conecta con ellos desde el corazon.', author: 'Sofia Mendoza, Fandom' },
+        { text: 'Instagram es tu escenario digital, [NOMBRE]. Cada post es una oportunidad de impactar.', author: 'Marcos Rivera, Instagram' },
+        { text: '[NOMBRE], TikTok puede cambiar tu carrera en un solo video. Atrévete a crear sin miedo.', author: 'Luna Salazar, TikTok' },
+        { text: 'YouTube es tu legado visual, [NOMBRE]. Lo que subas hoy lo veran millones manana.', author: 'Daniel Herrera, YouTube' },
+        { text: '[NOMBRE], cada stream cuenta. Tu musica merece ser escuchada en repeat.', author: 'Mateo Valenzuela, Spotify' },
+        { text: '[NOMBRE], el exito musical no es suerte — es estrategia, constancia y pasion. Tu equipo esta contigo.', author: 'Cris Velez, Director Power Records AI Latinoamerica' },
+    ];
+
+    // ============ STATE ============
+    let artistData = { name: 'Artista', photo: '', plan: 'pro', recording_day: 'Viernes', rhythm: 'intenso' };
+    let planData = { tasks: [], completed: [] };
+    let metricsData = { spotify: 1250, instagram: 3400, tiktok: 8900, youtube: 620 };
+    let currentQuote = 0;
+
+    // ============ HELPERS ============
+    function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    async function getJSON(url) {
+        try { const r = await fetch(url); return await r.json(); } catch(e) { return null; }
+    }
+    async function postJSON(url, data) {
+        try { await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) }); } catch(e) {}
+    }
+
+    // ============ VIEWS ============
+    function openView(id) {
+        document.getElementById(id).classList.add('active');
+        document.body.style.overflow = 'hidden';
+        window.history.pushState({ view: id }, '', '#' + id);
+        if (viewRenderers[id]) viewRenderers[id]();
+    }
+    function closeView(id) {
+        document.getElementById(id).classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    window.addEventListener('popstate', () => {
+        document.querySelectorAll('.view-modal.active').forEach(v => v.classList.remove('active'));
+        document.body.style.overflow = '';
+    });
+
+    // ============ ORBIT RENDER ============
+    function renderOrbit() {
+        const container = document.getElementById('orbitContainer');
+        const cx = 160, cy = 160, radius = 125;
+        // Remove old agents
+        container.querySelectorAll('.orbit-agent, .orbit-line, .orbit-label').forEach(e => e.remove());
+
+        AGENTS.forEach((agent, i) => {
+            const angle = (i / AGENTS.length) * Math.PI * 2 - Math.PI / 2;
+            const x = cx + Math.cos(angle) * radius - 24;
+            const y = cy + Math.sin(angle) * radius - 24;
+
+            const isLocked = !agent.plans.includes(artistData.plan);
+
+            // Line
+            const line = document.createElement('div');
+            line.className = 'orbit-line';
+            const lx = cx, ly = cy;
+            const ax = x + 24, ay = y + 24;
+            const dist = Math.sqrt((ax - lx) ** 2 + (ay - ly) ** 2);
+            const angleL = Math.atan2(ay - ly, ax - lx);
+            line.style.cssText = `left:${lx}px; top:${ly}px; width:${dist - 40}px; transform:rotate(${angleL}rad) translateX(20px);`;
+            if (!isLocked) line.style.background = agent.color + '30';
+            container.appendChild(line);
+
+            // Agent circle
+            const el = document.createElement('div');
+            el.className = 'orbit-agent' + (isLocked ? ' locked' : '');
+            el.style.cssText = `left:${x}px; top:${y}px; border: 2px solid ${isLocked ? '#333' : agent.color}; box-shadow: ${isLocked ? 'none' : '0 0 12px ' + agent.color + '40'};`;
+            el.innerHTML = `<img src="${agent.img}" alt="${agent.name}">`;
+            el.onclick = () => showAgentPanel(agent);
+            container.appendChild(el);
+
+            // Label
+            const label = document.createElement('div');
+            label.className = 'orbit-label';
+            const labelX = cx + Math.cos(angle) * (radius + 30) - 30;
+            const labelY = cy + Math.sin(angle) * (radius + 30) - 6;
+            label.style.cssText = `left:${labelX}px; top:${labelY}px; width:60px; color:${isLocked ? '#444' : agent.color};`;
+            label.textContent = agent.name.split(' ')[0];
+            container.appendChild(label);
+        });
+    }
+
+    // ============ AGENT PANEL ============
+    function showAgentPanel(agent) {
+        const isLocked = !agent.plans.includes(artistData.plan);
+        document.getElementById('apPhoto').src = agent.img;
+        document.getElementById('apPhoto').style.border = `3px solid ${agent.color}`;
+        document.getElementById('apName').textContent = agent.name;
+        document.getElementById('apRole').textContent = agent.role;
+
+        const actionDiv = document.getElementById('apAction');
+        if (isLocked) {
+            const neededPlan = agent.plans[0];
+            actionDiv.innerHTML = `
+                <div style="text-align:center; margin-top:16px; padding:14px; background:rgba(255,255,255,0.04); border-radius:14px;">
+                    <div style="font-size:0.8rem; color:var(--text-dim);">Desbloquea a ${agent.name.split(' ')[0]} con el plan</div>
+                    <div style="font-size:1.1rem; font-weight:900; color:var(--gold); margin-top:4px;">${PLAN_NAMES[neededPlan]} ${PLAN_PRICES[neededPlan]}/mes</div>
+                </div>
+                <button class="agent-panel-btn upgrade">Upgrade a ${PLAN_NAMES[neededPlan]}</button>`;
+        } else {
+            actionDiv.innerHTML = `
+                <button class="agent-panel-btn talk">Hablar con ${agent.name.split(' ')[0]}</button>
+                <div style="text-align:center; margin-top:12px; font-size:0.7rem; color:var(--text-dim);">
+                    ${agent.role} de tu equipo Power Records AI
+                </div>`;
+        }
+
+        document.getElementById('agentPanel').classList.add('open');
+        document.getElementById('agentOverlay').classList.add('open');
+    }
+
+    function closeAgentPanel() {
+        document.getElementById('agentPanel').classList.remove('open');
+        document.getElementById('agentOverlay').classList.remove('open');
+    }
+
+    // ============ QUOTES ROTATION ============
+    function rotateQuote() {
+        const q = QUOTES[currentQuote];
+        const name = artistData.name || 'Artista';
+        document.getElementById('quoteText').textContent = q.text.replace('[NOMBRE]', name);
+        document.getElementById('quoteAuthor').textContent = '— ' + q.author;
+        currentQuote = (currentQuote + 1) % QUOTES.length;
+    }
+
+    // ============ ARTIST PROFILE UPDATE ============
+    function updateArtistUI() {
+        const plan = artistData.plan || 'pro';
+        const photo = document.getElementById('artistPhoto');
+        photo.className = 'artist-photo plan-' + plan;
+        document.getElementById('artistName').textContent = artistData.name || 'Tu Nombre';
+
+        const badge = document.getElementById('artistBadge');
+        badge.className = 'artist-plan-badge badge-' + plan;
+        badge.textContent = PLAN_NAMES[plan] || plan;
+
+        const crown = document.getElementById('artistCrown');
+        crown.className = plan === 'elite' ? 'crown visible' : 'crown';
+
+        const glow = document.getElementById('artistGlow');
+        const colors = { motor: '136,136,136', creator: '59,130,246', pro: '168,85,247', elite: '255,215,0' };
+        glow.style.background = `radial-gradient(circle, rgba(${colors[plan]},0.4), transparent 70%)`;
+
+        // Rhythm
+        document.querySelectorAll('.rhythm-card').forEach(c => {
+            c.classList.toggle('active', c.dataset.rhythm === artistData.rhythm);
+        });
+
+        // Recording day
+        if (artistData.recording_day) {
+            document.getElementById('recBanner').style.display = 'block';
+            document.getElementById('recDetails').textContent = artistData.recording_day;
+        }
+
+        renderOrbit();
+    }
+
+    function setRhythm(r) {
+        artistData.rhythm = r;
+        document.querySelectorAll('.rhythm-card').forEach(c => {
+            c.classList.toggle('active', c.dataset.rhythm === r);
+        });
+        postJSON('/api/artist', artistData);
+    }
+
+    // ============ MODULE RENDERERS ============
+    const viewRenderers = {
+        planView: renderPlan,
+        metricsView: renderMetrics,
+        profileView: renderProfile,
+        fandomView: () => renderPlaceholder('fandomContent', 'Fandom', 'Proximamente: gestiona tu comunidad de fans'),
+        calendarView: () => renderPlaceholder('calendarContent', 'Calendario', 'Proximamente: tus eventos y deadlines'),
+        portfolioView: () => renderPlaceholder('portfolioContent', 'Portfolio', 'Proximamente: tus tracks y videos'),
+        vaultView: () => renderPlaceholder('vaultContent', 'Boveda', 'Proximamente: archivos protegidos'),
+        resourcesView: () => renderPlaceholder('resourcesContent', 'Recursos', 'Proximamente: guias y tutoriales'),
+        showsView: () => renderPlaceholder('showsContent', 'Shows', 'Proximamente: gestiona tus presentaciones'),
+        alertsView: () => renderPlaceholder('alertsContent', 'Oportunidades', 'Proximamente: convocatorias y becas'),
+    };
+
+    function renderPlaceholder(containerId, title, desc) {
+        document.getElementById(containerId).innerHTML = `
+            <div style="text-align:center; padding:60px 20px;">
+                <div style="font-size:3rem; margin-bottom:16px;">🚀</div>
+                <div style="font-size:1rem; font-weight:800; margin-bottom:8px;">${title}</div>
+                <div style="font-size:0.8rem; color:var(--text-dim);">${desc}</div>
+            </div>`;
+    }
+
+    function renderPlan() {
+        const c = document.getElementById('planContent');
+        let html = '';
+        (planData.tasks || []).forEach((t, i) => {
+            html += `
+                <div class="task-item">
+                    <div class="task-check ${t.done ? 'done' : ''}" onclick="togglePlanTask(${i})"></div>
+                    <div class="task-text ${t.done ? 'done' : ''}">${esc(t.text)}</div>
+                    <button onclick="deletePlanTask(${i})" style="background:none; border:none; color:#ef4444; font-size:0.8rem; cursor:pointer;">✕</button>
+                </div>`;
+        });
+        html += `<button class="add-btn" onclick="addPlanTask()">+ Agregar Tarea</button>`;
+        c.innerHTML = html;
+    }
+
+    async function addPlanTask() {
+        const text = prompt('Nueva tarea del dia:');
+        if (!text || !text.trim()) return;
+        planData.tasks.push({ text: text.trim(), done: false });
+        renderPlan();
+        await postJSON('/api/plan', planData);
+    }
+
+    async function togglePlanTask(i) {
+        planData.tasks[i].done = !planData.tasks[i].done;
+        renderPlan();
+        await postJSON('/api/plan', planData);
+    }
+
+    async function deletePlanTask(i) {
+        planData.tasks.splice(i, 1);
+        renderPlan();
+        await postJSON('/api/plan', planData);
+    }
+
+    function renderMetrics() {
+        const c = document.getElementById('metricsContent');
+        const metrics = [
+            { icon: '🟢', label: 'Spotify Listeners', value: metricsData.spotify, color: '#1db954' },
+            { icon: '📸', label: 'Instagram Followers', value: metricsData.instagram, color: '#e91e63' },
+            { icon: '🎵', label: 'TikTok Followers', value: metricsData.tiktok, color: '#00e5ff' },
+            { icon: '▶️', label: 'YouTube Subscribers', value: metricsData.youtube, color: '#ff1744' },
+        ];
+        c.innerHTML = metrics.map(m => `
+            <div class="metric-card">
+                <div class="metric-icon">${m.icon}</div>
+                <div class="metric-info">
+                    <div class="metric-label">${m.label}</div>
+                    <div class="metric-value" style="color:${m.color}">${m.value.toLocaleString()}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function renderProfile() {
+        const c = document.getElementById('profileContent');
+        c.innerHTML = `
+            <div style="text-align:center; margin-bottom:24px;">
+                <img src="${artistData.photo || 'img/banner.jpg'}" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid var(--accent);">
+                <div style="font-size:1.2rem; font-weight:900; margin-top:12px;">${esc(artistData.name)}</div>
+                <div class="artist-plan-badge badge-${artistData.plan}" style="display:inline-block; margin-top:6px;">${PLAN_NAMES[artistData.plan]}</div>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:0.7rem; color:var(--text-dim); font-weight:700;">NOMBRE ARTISTICO</label>
+                <input id="pf_name" value="${esc(artistData.name)}" style="width:100%; padding:12px; margin-top:6px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; color:#fff; font-family:inherit; font-size:0.85rem;">
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:0.7rem; color:var(--text-dim); font-weight:700;">DIA DE GRABACION</label>
+                <select id="pf_recday" style="width:100%; padding:12px; margin-top:6px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; color:#fff; font-family:inherit; font-size:0.85rem;">
+                    ${['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'].map(d => `<option value="${d}" ${artistData.recording_day === d ? 'selected' : ''}>${d}</option>`).join('')}
+                </select>
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:0.7rem; color:var(--text-dim); font-weight:700;">PLAN ACTUAL</label>
+                <select id="pf_plan" style="width:100%; padding:12px; margin-top:6px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; color:#fff; font-family:inherit; font-size:0.85rem;">
+                    ${PLAN_ORDER.map(p => `<option value="${p}" ${artistData.plan === p ? 'selected' : ''}>${PLAN_NAMES[p]} (${PLAN_PRICES[p]}/mes)</option>`).join('')}
+                </select>
+            </div>
+            <button onclick="saveProfile()" style="width:100%; padding:14px; background:linear-gradient(135deg, var(--accent), #7c3aed); border:none; border-radius:14px; color:#fff; font-weight:800; font-size:0.9rem; cursor:pointer; font-family:inherit;">Guardar Cambios</button>
+        `;
+    }
+
+    async function saveProfile() {
+        artistData.name = document.getElementById('pf_name').value.trim() || 'Artista';
+        artistData.recording_day = document.getElementById('pf_recday').value;
+        artistData.plan = document.getElementById('pf_plan').value;
+        updateArtistUI();
+        await postJSON('/api/artist', artistData);
+        closeView('profileView');
+    }
+
+    // ============ NAV ============
+    function navTo(section) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        if (section === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ============ TOUCH GLOW ============
+    document.querySelectorAll('.mod-card, .rhythm-card, .alert-banner').forEach(el => {
+        el.addEventListener('touchstart', () => el.classList.add('glow'), { passive: true });
+        el.addEventListener('touchend', () => setTimeout(() => el.classList.remove('glow'), 200));
+        el.addEventListener('touchcancel', () => el.classList.remove('glow'));
+    });
+
+    // ============ INIT ============
+    async function init() {
+        const a = await getJSON('/api/artist');
+        if (a && a.name) artistData = a;
+        const p = await getJSON('/api/plan');
+        if (p && p.tasks) planData = p;
+        const m = await getJSON('/api/metrics');
+        if (m && m.spotify !== undefined) metricsData = m;
+
+        updateArtistUI();
+        rotateQuote();
+        setInterval(rotateQuote, 7000);
+    }
+    init();
+</script>
+</body>
+</html>
