@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>POWER RECORDS - Artist Hub</title>
     <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="img/logo-180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="img/logo-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="img/logo-512.png">
     <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -45,7 +50,6 @@
             background: linear-gradient(to bottom, var(--bg) 80%, transparent);
             z-index: 100;
         }
-        .header-logo { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; margin: 0 auto 8px; display: block; box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
         .header-brand { font-weight: 900; font-size: 1.6rem; letter-spacing: 1px; color: #fff; }
         .header-sub { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
         .profile-section { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 20px; }
@@ -782,7 +786,6 @@
             <div style="display:flex; justify-content:flex-end; margin-bottom:4px;">
                 <button id="langToggleBtn" onclick="event.stopPropagation(); toggleLang()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:5px 14px; color:#fff; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.3s;">ES | EN</button>
             </div>
-            <img src="img/logo.jpg" alt="Power Records AI" class="header-logo">
             <div class="header-brand">POWER RECORDS</div>
             <div class="header-sub" data-es="Artist Hub" data-en="Artist Hub">Artist Hub</div>
             <div class="profile-section">
