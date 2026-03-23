@@ -990,12 +990,12 @@
     </div>
 
     <!-- GRABADORA -->
-    <div class="view-modal" id="grabadoraView">
-        <div class="view-header">
-            <button class="back-btn" onclick="closeView('grabadoraView')">←</button>
-            <h2 class="view-title" data-es="Grabadora" data-en="Recorder">Grabadora</h2>
+    <div class="view-modal" id="grabadoraView" style="background:#1a1510;">
+        <div class="view-header" style="position:absolute; top:0; left:0; right:0; z-index:10; background:transparent; border-bottom:none;">
+            <button class="back-btn" onclick="closeView('grabadoraView')" style="background:rgba(0,0,0,0.5); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);">←</button>
+            <h2 class="view-title" style="opacity:0;">Grabadora</h2>
         </div>
-        <div class="view-content" id="grabadoraContent"></div>
+        <div class="view-content" id="grabadoraContent" style="padding:0; display:flex; flex-direction:column; height:100%;"></div>
     </div>
 
     <!-- EQUIPO -->
@@ -2021,21 +2021,25 @@ window.addEventListener('unhandledrejection', function(e) {
         function renderGrabadora() {
             const c = document.getElementById('grabadoraContent');
             let html = `
-                <div class="recorder-section" style="text-align:center;">
-                    <div id="cassetteBody" style="position:relative; display:inline-block; max-width:100%; border-radius:16px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.5); transition:box-shadow 0.3s;">
-                        <img id="cassetteImg" src="img/cassette-still.jpg" alt="Power Records Cassette" style="width:100%; max-width:360px; display:block; border-radius:16px;">
-                        <div class="rec-light" style="position:absolute; top:12px; left:12px;"></div>
+                <div class="recorder-section" style="text-align:center; flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative;">
+                    <div id="cassetteBody" style="position:relative; width:100%; transition:box-shadow 0.3s;">
+                        <img id="cassetteImg" src="img/cassette-still.jpg" alt="Power Records Cassette" style="width:100%; display:block;">
+                        <div class="rec-light" style="position:absolute; top:20px; left:20px;"></div>
+                        <div style="position:absolute; bottom:0; left:0; right:0; height:120px; background:linear-gradient(transparent, #1a1510); pointer-events:none;"></div>
                     </div>
-                    <div class="rec-timer" id="recTimer" style="margin-top:16px;">0:00</div>
-                    <div class="rec-status" id="recStatus">${currentLang === 'en' ? 'Tap to record your idea' : 'Toca para grabar tu idea'}</div>
-                    <div class="rec-controls">
-                        <button class="rec-btn-c rec-main" id="recBtn" onclick="toggleRecording()">
-                            <span id="recIcon">⏺</span>
-                        </button>
+                    <div style="padding:0 20px; width:100%; background:#1a1510; position:relative; z-index:2; margin-top:-20px;">
+                        <div class="rec-timer" id="recTimer" style="font-size:2.5rem;">0:00</div>
+                        <div class="rec-status" id="recStatus" style="margin-bottom:12px;">${currentLang === 'en' ? 'Tap to record your idea' : 'Toca para grabar tu idea'}</div>
+                        <div class="rec-controls" style="margin-bottom:20px;">
+                            <button class="rec-btn-c rec-main" id="recBtn" onclick="toggleRecording()" style="width:64px; height:64px; font-size:1.8rem;">
+                                <span id="recIcon">⏺</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="section-header" data-es="Grabaciones" data-en="Recordings">${currentLang === 'en' ? 'Recordings' : 'Grabaciones'}</div>
-                <div id="recordingsList">`;
+                <div style="padding:0 20px 20px; background:#1a1510;">
+                    <div class="section-header" data-es="Grabaciones" data-en="Recordings" style="color:rgba(255,255,255,0.4);">${currentLang === 'en' ? 'Recordings' : 'Grabaciones'}</div>
+                    <div id="recordingsList">`;
             if (recordings.length === 0) {
                 html += `<div class="empty-state">${currentLang === 'en' ? 'No recordings yet' : 'Sin grabaciones aun'}</div>`;
             } else {
