@@ -223,6 +223,10 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .lead-info b { color: var(--accent); }
         .lead-info span { font-size: 0.8rem; color: var(--text-dim); }
         .lead-time { font-size: 0.7rem; opacity: 0.6; }
@@ -988,15 +992,54 @@
         <div class="view-content" id="ideasContent"></div>
     </div>
 
-    <!-- MI HORARIO -->
+    <!-- MI HORARIO - WEEKLY VIEW -->
     <div class="view-modal" id="horarioView">
-        <div class="view-header">
-            <button class="back-btn" onclick="closeView('horarioView')">←</button>
-            <h2 class="view-title" id="horarioTitle">MI HORARIO</h2>
+        <div class="view-header" style="flex-direction:column; align-items:stretch; gap:8px; padding-bottom:14px;">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <button class="back-btn" onclick="closeView('horarioView')">←</button>
+                <div style="flex:1;">
+                    <div style="font-size:0.6rem; color:#C9A84C; font-weight:700; letter-spacing:2px; text-transform:uppercase;">POWER RECORDS AI</div>
+                    <h2 class="view-title" style="margin:2px 0 0;">MI CALENDARIO</h2>
+                </div>
+            </div>
+            <div id="horarioWeekLabel" style="font-size:0.8rem; color:var(--text-dim); font-weight:600; padding-left:2px;"></div>
+            <div id="horarioStats" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:4px;"></div>
         </div>
         <div class="view-content" id="horarioContent">
-            <div id="horarioWeekLabel" style="text-align:center; font-size:1.1rem; font-weight:700; margin-bottom:20px; background:linear-gradient(135deg,#a855f7,#06b6d4); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;"></div>
-            <div id="horarioDays"></div>
+            <div id="horarioWeekGrid"></div>
+        </div>
+    </div>
+
+    <!-- MI HORARIO - DAY VIEW -->
+    <div class="view-modal" id="horarioDayView">
+        <div class="view-header" id="horarioDayHeader" style="flex-direction:column; align-items:stretch; gap:6px;">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <button class="back-btn" onclick="closeHorarioDay()">←</button>
+                <h2 class="view-title" id="horarioDayTitle">Lunes</h2>
+                <span id="horarioDayDate" style="font-size:0.75rem; color:rgba(255,255,255,0.5); margin-left:auto;"></span>
+            </div>
+            <div id="horarioDayTypes" style="display:flex; gap:8px; overflow-x:auto; padding:6px 0; -webkit-overflow-scrolling:touch;"></div>
+        </div>
+        <div class="view-content" id="horarioDayContent" style="padding:12px 16px; position:relative;">
+            <div id="horarioTimeline"></div>
+            <button id="horarioFab" onclick="openAddActivity()" style="position:fixed; bottom:30px; right:24px; width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,#C9A84C,#E8C860); border:none; color:#000; font-size:1.8rem; font-weight:700; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.4); z-index:100; display:flex; align-items:center; justify-content:center;">+</button>
+        </div>
+    </div>
+
+    <!-- ADD ACTIVITY MODAL -->
+    <div class="modal-overlay" id="addActivityModal">
+        <div class="modal-content" style="max-height:85vh; overflow-y:auto; border-color:rgba(201,168,76,0.3);">
+            <h3 style="color:#C9A84C;">Agregar Actividad</h3>
+            <div style="font-size:0.75rem; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Tipo de Actividad</div>
+            <div id="activityTypeGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
+            <div style="font-size:0.75rem; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-top:14px;">Descripcion</div>
+            <input class="form-input" id="activityTitle" placeholder="Que vas a hacer?" style="margin-top:6px;">
+            <div style="font-size:0.75rem; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-top:14px;">Hora</div>
+            <select class="form-input" id="activityHour" style="margin-top:6px;"></select>
+            <div style="font-size:0.75rem; color:var(--text-dim); font-weight:600; text-transform:uppercase; letter-spacing:1px; margin-top:14px;">Duracion</div>
+            <div id="activityDurationBtns" style="display:flex; gap:10px; margin-top:6px;"></div>
+            <button id="addActivityBtn" onclick="confirmAddActivity()" style="width:100%; padding:14px; border-radius:14px; border:none; background:linear-gradient(135deg,#C9A84C,#E8C860); color:#000; font-weight:800; font-size:0.9rem; cursor:pointer; margin-top:16px; letter-spacing:0.5px; opacity:0.4; pointer-events:none;">AGREGAR AL CALENDARIO</button>
+            <button onclick="document.getElementById('addActivityModal').classList.remove('active')" style="width:100%; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.1); background:transparent; color:var(--text-dim); font-weight:600; font-size:0.8rem; cursor:pointer; margin-top:8px;">Cancelar</button>
         </div>
     </div>
 
@@ -1225,10 +1268,29 @@ window.addEventListener('unhandledrejection', function(e) {
     document.body.classList.remove('syncing');
 }
 
-        // ============ HORARIO / SCHEDULE ============
+        // ============ HORARIO / CALENDARIO ============
         const DIAS = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
-        const DIAS_EN = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-        const DIA_COLORS = ['#a855f7','#06d6a0','#3b82f6','#f97316','#ec4899','#14b8a6','#eab308'];
+        const DIAS_SHORT = ['LUN','MAR','MIE','JUE','VIE','SAB','DOM'];
+        const DIA_GRADIENTS = [
+            ['#7B2FBE','#9B4FDE'],['#0D7C66','#14A88A'],['#1E4D8C','#2B6BC4'],
+            ['#B8600E','#D4811A'],['#BE2F5B','#DE4F7B'],['#1A8A5C','#22B876'],['#6B3FA3','#8B5FC3']
+        ];
+        const ACTIVITY_TYPES = [
+            {id:'lanzamiento',label:'Lanzamiento',emoji:'🚀',color:'#C9A84C'},
+            {id:'ensayo',label:'Ensayo',emoji:'🎸',color:'#9B6FC3'},
+            {id:'tiktok',label:'TikTok',emoji:'🎵',color:'#00D4AA'},
+            {id:'instagram',label:'Instagram',emoji:'📸',color:'#E1724B'},
+            {id:'youtube',label:'YouTube',emoji:'🎬',color:'#FF4444'},
+            {id:'entrevista',label:'Entrevista',emoji:'🎙️',color:'#6BA3D6'},
+            {id:'estudiar',label:'Estudiar Cancion',emoji:'📖',color:'#E088B4'},
+            {id:'produccion',label:'Produccion',emoji:'🎛️',color:'#4A6FA5'},
+            {id:'contenido',label:'Grabar Contenido',emoji:'📹',color:'#8BC34A'},
+            {id:'correos',label:'Escribir Correos',emoji:'✉️',color:'#78909C'},
+            {id:'fandom',label:'Acciones Fandom',emoji:'💜',color:'#AB47BC'},
+            {id:'show',label:'Show en Vivo',emoji:'🔥',color:'#FF6D00'},
+        ];
+        let currentHorarioDay = 0;
+        let addActivityState = { type: null, duration: 1 };
 
         function getWeekRange() {
             const now = new Date();
@@ -1238,29 +1300,36 @@ window.addEventListener('unhandledrejection', function(e) {
             monday.setDate(now.getDate() + mondayOffset);
             const sunday = new Date(monday);
             sunday.setDate(monday.getDate() + 6);
-            const months_es = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-            const months_en = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-            const isEn = document.documentElement.lang === 'en';
-            const ms = isEn ? months_en : months_es;
-            const label = isEn
-                ? `Week of ${ms[monday.getMonth()]} ${monday.getDate()} - ${ms[sunday.getMonth()]} ${sunday.getDate()}`
-                : `Semana del ${monday.getDate()} al ${sunday.getDate()} de ${ms[monday.getMonth()]}`;
-            return { monday, label, todayIndex: (day === 0 ? 6 : day - 1) };
+            const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+            const label = `Semana del ${monday.getDate()} al ${sunday.getDate()} de ${months[monday.getMonth()]}`;
+            const dates = [];
+            for (let i = 0; i < 7; i++) { const d = new Date(monday); d.setDate(monday.getDate() + i); dates.push(d); }
+            return { monday, sunday, label, todayIndex: (day === 0 ? 6 : day - 1), dates };
+        }
+
+        function getDayEvents(dayIndex) {
+            const key = DIAS[dayIndex].toLowerCase();
+            return horarioData[key] || [];
+        }
+
+        function formatHour12(h) {
+            if (h === 0 || h === 12) return (h === 0 ? '12' : '12') + (h < 12 ? ' AM' : ' PM');
+            return (h > 12 ? h - 12 : h) + (h >= 12 ? ' PM' : ' AM');
         }
 
         function renderWeekPreview() {
-            const { label, todayIndex } = getWeekRange();
+            const { label, todayIndex, dates } = getWeekRange();
             const lbl = document.getElementById('weekPreviewLabel');
             if (lbl) lbl.textContent = label;
             const c = document.getElementById('weekPreviewDays');
             if (!c) return;
-            c.innerHTML = DIAS.map((d, i) => {
+            c.innerHTML = DIAS_SHORT.map((d, i) => {
                 const isToday = i === todayIndex;
-                const tasks = (horarioData[d.toLowerCase()] || []);
-                const count = tasks.length;
-                return `<div style="text-align:center; padding:8px 2px; border-radius:14px; background:${isToday ? DIA_COLORS[i] + '33' : 'rgba(255,255,255,0.04)'}; border:1.5px solid ${isToday ? DIA_COLORS[i] : 'rgba(255,255,255,0.06)'}; ${isToday ? 'box-shadow:0 0 12px ' + DIA_COLORS[i] + '44;' : ''} cursor:pointer;" onclick="openView('horarioView')">
-                    <div style="font-size:0.6rem; font-weight:800; color:${isToday ? DIA_COLORS[i] : '#8a8a9a'}; text-transform:uppercase;">${d.substring(0,3)}</div>
-                    <div style="font-size:0.7rem; margin-top:2px; color:${isToday ? '#fff' : '#555'};">${count > 0 ? count : '-'}</div>
+                const evts = getDayEvents(i);
+                const g = DIA_GRADIENTS[i];
+                return `<div style="text-align:center; padding:8px 2px; border-radius:14px; background:${isToday ? g[0] + '33' : 'rgba(255,255,255,0.04)'}; border:1.5px solid ${isToday ? g[0] : 'rgba(255,255,255,0.06)'}; ${isToday ? 'box-shadow:0 0 12px ' + g[0] + '44;' : ''} cursor:pointer;" onclick="openView('horarioView')">
+                    <div style="font-size:0.55rem; font-weight:800; color:${isToday ? g[1] : '#8a8a9a'};">${d}</div>
+                    <div style="font-size:0.65rem; margin-top:2px; color:${isToday ? '#fff' : '#555'};">${evts.length || '-'}</div>
                 </div>`;
             }).join('');
         }
@@ -1268,64 +1337,229 @@ window.addEventListener('unhandledrejection', function(e) {
         async function renderHorario() {
             const data = await getJSON('/api/horario');
             if (data) horarioData = data;
-            const { label, todayIndex } = getWeekRange();
+            const { label, todayIndex, dates } = getWeekRange();
             document.getElementById('horarioWeekLabel').textContent = label;
-            const container = document.getElementById('horarioDays');
-            container.innerHTML = DIAS.map((dia, i) => {
-                const isToday = i === todayIndex;
-                const key = dia.toLowerCase();
-                const tasks = horarioData[key] || [];
-                const color = DIA_COLORS[i];
-                return `
-                <div style="margin-bottom:16px; border-radius:18px; background:rgba(255,255,255,0.04); border:1.5px solid ${isToday ? color : 'rgba(255,255,255,0.08)'}; overflow:hidden; ${isToday ? 'box-shadow:0 0 20px ' + color + '33;' : ''}">
-                    <div style="padding:14px 16px; display:flex; align-items:center; justify-content:space-between; background:${isToday ? color + '22' : 'transparent'};">
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:10px; height:10px; border-radius:50%; background:${color}; ${isToday ? 'box-shadow:0 0 10px ' + color + ';' : 'opacity:0.5;'}"></div>
-                            <span style="font-weight:800; font-size:0.95rem; color:${isToday ? '#fff' : '#8a8a9a'};">${dia}</span>
-                            ${isToday ? '<span style="font-size:0.6rem; background:' + color + '; color:#fff; padding:2px 8px; border-radius:10px; font-weight:700;">HOY</span>' : ''}
-                        </div>
-                        <button onclick="addHorarioTask('${key}')" style="background:${color}22; border:1px solid ${color}44; color:${color}; width:28px; height:28px; border-radius:8px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">+</button>
-                    </div>
-                    <div id="horario_${key}" style="padding:0 16px 12px;">
-                        ${tasks.length === 0 ? '<div style="font-size:0.75rem; opacity:0.3; padding:6px 0;">Sin tareas</div>' : tasks.map((t, ti) => `
-                            <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
-                                <div onclick="toggleHorarioTask('${key}',${ti})" style="width:20px; height:20px; border-radius:6px; border:2px solid ${t.done ? color : 'rgba(255,255,255,0.15)'}; background:${t.done ? color : 'transparent'}; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.7rem; color:#fff;">${t.done ? '✓' : ''}</div>
-                                <span style="font-size:0.8rem; color:${t.done ? '#555' : '#ccc'}; ${t.done ? 'text-decoration:line-through;' : ''} flex:1;">${esc(t.text)}</span>
-                                <button onclick="deleteHorarioTask('${key}',${ti})" style="background:none; border:none; color:#555; font-size:0.8rem; cursor:pointer;">✕</button>
-                            </div>
-                        `).join('')}
-                    </div>
+            // Stats
+            let totalAct = 0, totalContent = 0, totalShows = 0;
+            DIAS.forEach((d,i) => {
+                const evts = getDayEvents(i);
+                totalAct += evts.length;
+                evts.forEach(e => {
+                    if (['tiktok','instagram','youtube','contenido'].includes(e.type)) totalContent++;
+                    if (e.type === 'show') totalShows++;
+                });
+            });
+            document.getElementById('horarioStats').innerHTML = `
+                <div style="background:rgba(255,255,255,0.06); border-radius:12px; padding:10px; text-align:center;">
+                    <div style="font-size:1.1rem;">⚡</div>
+                    <div style="font-size:1rem; font-weight:800; color:#fff;">${totalAct}</div>
+                    <div style="font-size:0.6rem; color:var(--text-dim);">Actividades</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.06); border-radius:12px; padding:10px; text-align:center;">
+                    <div style="font-size:1.1rem;">📱</div>
+                    <div style="font-size:1rem; font-weight:800; color:#fff;">${totalContent}</div>
+                    <div style="font-size:0.6rem; color:var(--text-dim);">Contenido</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.06); border-radius:12px; padding:10px; text-align:center;">
+                    <div style="font-size:1.1rem;">🔥</div>
+                    <div style="font-size:1rem; font-weight:800; color:#fff;">${totalShows}</div>
+                    <div style="font-size:0.6rem; color:var(--text-dim);">Shows</div>
                 </div>`;
-            }).join('');
+            // Week grid - 2 columns, domingo full width
+            const grid = document.getElementById('horarioWeekGrid');
+            grid.innerHTML = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">' +
+                DIAS.map((dia, i) => {
+                    const isToday = i === todayIndex;
+                    const g = DIA_GRADIENTS[i];
+                    const evts = getDayEvents(i);
+                    const dateStr = dates[i].getDate();
+                    const isDom = i === 6;
+                    const preview = evts.slice(0, 3);
+                    return `<div onclick="openHorarioDay(${i})" style="${isDom ? 'grid-column:1/-1;' : ''} border-radius:var(--radius); padding:20px 16px; background:linear-gradient(145deg, ${g[0]}, ${g[1]}); box-shadow:0 4px 16px ${g[0]}33; cursor:pointer; position:relative; overflow:hidden; min-height:${isDom ? '100' : '140'}px; transition:transform 0.2s; animation:fadeSlideIn 0.4s ease-out ${i * 0.06}s both;" ontouchstart="this.style.transform='scale(0.96)'" ontouchend="this.style.transform=''">
+                        <div style="position:absolute; top:-20px; right:-20px; width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,0.06);"></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <div>
+                                <span style="font-weight:800; font-size:0.85rem; color:#fff;">${DIAS_SHORT[i]}</span>
+                                <span style="font-size:0.75rem; color:rgba(255,255,255,0.6); margin-left:6px;">${dateStr}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                ${isToday ? '<span style="font-size:0.55rem; background:rgba(255,255,255,0.25); color:#fff; padding:2px 8px; border-radius:10px; font-weight:700; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px);">HOY</span>' : ''}
+                                ${evts.length > 0 ? '<div style="width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:800; color:#fff;">' + evts.length + '</div>' : ''}
+                            </div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:4px;">
+                            ${preview.length === 0 ? '<div style="font-size:0.7rem; color:rgba(255,255,255,0.4); font-style:italic;">Sin actividades</div>' : preview.map(e => {
+                                const at = ACTIVITY_TYPES.find(a => a.id === e.type) || {emoji:'📌',label:'Otro'};
+                                return `<div style="font-size:0.7rem; color:rgba(255,255,255,0.85); display:flex; align-items:center; gap:6px;">
+                                    <span>${at.emoji}</span>
+                                    <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${esc(e.title)}</span>
+                                    <span style="color:rgba(255,255,255,0.5); font-size:0.6rem;">${formatHour12(e.hour)}</span>
+                                </div>`;
+                            }).join('')}
+                            ${evts.length > 3 ? '<div style="font-size:0.6rem; color:rgba(255,255,255,0.4);">+' + (evts.length - 3) + ' mas</div>' : ''}
+                        </div>
+                    </div>`;
+                }).join('') + '</div>';
         }
 
-        function addHorarioTask(day) {
-            const isEn = document.documentElement.lang === 'en';
-            const text = prompt(isEn ? 'New task for ' + day + ':' : 'Nueva tarea para ' + day + ':');
-            if (!text || !text.trim()) return;
-            if (!horarioData[day]) horarioData[day] = [];
-            horarioData[day].push({ text: text.trim(), done: false });
-            saveHorario();
+        function openHorarioDay(dayIndex) {
+            currentHorarioDay = dayIndex;
+            const el = document.getElementById('horarioDayView');
+            el.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            const g = DIA_GRADIENTS[dayIndex];
+            const header = document.getElementById('horarioDayHeader');
+            header.style.background = `linear-gradient(135deg, ${g[0]}dd, ${g[1]}dd)`;
+            header.style.borderBottom = 'none';
+            document.getElementById('horarioDayTitle').textContent = DIAS[dayIndex];
+            const { dates, todayIndex } = getWeekRange();
+            const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+            document.getElementById('horarioDayDate').textContent = dates[dayIndex].getDate() + ' ' + months[dates[dayIndex].getMonth()];
+            // Type strip
+            const strip = document.getElementById('horarioDayTypes');
+            strip.innerHTML = ACTIVITY_TYPES.slice(0, 6).map(at => `
+                <div style="flex-shrink:0; padding:4px 10px; border-radius:10px; background:${at.color}22; border:1px solid ${at.color}44; font-size:0.6rem; color:${at.color}; font-weight:600; white-space:nowrap;">${at.emoji} ${at.label}</div>
+            `).join('');
+            renderDayTimeline(dayIndex, todayIndex);
+        }
+
+        function closeHorarioDay() {
+            document.getElementById('horarioDayView').classList.remove('active');
+            document.body.style.overflow = 'hidden';
             renderHorario();
             renderWeekPreview();
         }
 
-        function toggleHorarioTask(day, index) {
-            if (horarioData[day] && horarioData[day][index]) {
-                horarioData[day][index].done = !horarioData[day][index].done;
-                saveHorario();
-                renderHorario();
-                renderWeekPreview();
+        function renderDayTimeline(dayIndex, todayIndex) {
+            const evts = getDayEvents(dayIndex);
+            const isToday = dayIndex === todayIndex;
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMin = now.getMinutes();
+            const container = document.getElementById('horarioTimeline');
+            let html = '';
+            for (let h = 6; h <= 23; h++) {
+                const label = formatHour12(h);
+                const evt = evts.find(e => e.hour === h);
+                const isNowHour = isToday && h === currentHour;
+                const nowPct = isToday && h === currentHour ? (currentMin / 60 * 100) : -1;
+                html += `<div style="display:flex; gap:12px; min-height:${evt ? (evt.duration || 1) * 60 : 56}px; position:relative; border-bottom:1px solid rgba(255,255,255,0.04);">`;
+                // Hour label
+                html += `<div style="width:55px; flex-shrink:0; padding-top:8px; font-size:0.7rem; color:${isNowHour ? '#ff4444' : 'rgba(255,255,255,0.3)'}; font-weight:${isNowHour ? '700' : '500'}; text-align:right;">${label}</div>`;
+                // Red line for current time
+                if (nowPct >= 0) {
+                    html += `<div style="position:absolute; left:55px; right:0; top:${nowPct}%; height:2px; background:#ff4444; z-index:5;"><div style="position:absolute; left:-5px; top:-4px; width:10px; height:10px; border-radius:50%; background:#ff4444;"></div></div>`;
+                }
+                // Event or empty slot
+                if (evt) {
+                    const at = ACTIVITY_TYPES.find(a => a.id === evt.type) || {emoji:'📌',label:'Otro',color:'#888'};
+                    const dur = evt.duration || 1;
+                    const endH = h + dur;
+                    html += `<div style="flex:1; padding:8px 12px; border-radius:12px; background:linear-gradient(135deg, ${at.color}, ${at.color}88); position:relative; overflow:hidden;">
+                        <div style="position:absolute; top:-10px; right:-10px; width:50px; height:50px; border-radius:50%; background:rgba(255,255,255,0.08);"></div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.7); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">${at.emoji} ${at.label}</div>
+                                <div style="font-size:0.85rem; font-weight:700; color:#fff; margin-top:2px;">${esc(evt.title)}</div>
+                                <div style="font-size:0.65rem; color:rgba(255,255,255,0.6); margin-top:4px;">${formatHour12(h)} - ${formatHour12(endH)} · ${dur}h</div>
+                            </div>
+                            <button onclick="deleteActivity(${dayIndex},${h})" style="background:rgba(0,0,0,0.2); border:none; color:rgba(255,255,255,0.6); width:24px; height:24px; border-radius:6px; font-size:0.8rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+                        </div>
+                    </div>`;
+                } else {
+                    html += `<div onclick="openAddActivity(${h})" style="flex:1; border:1.5px dashed transparent; border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s;" onmouseover="this.style.borderColor='#C9A84C44'; this.innerHTML='<span style=\\'color:#C9A84C55; font-size:1.2rem;\\'>+</span>'" onmouseout="this.style.borderColor='transparent'; this.innerHTML=''"></div>`;
+                }
+                html += '</div>';
             }
+            container.innerHTML = html;
         }
 
-        function deleteHorarioTask(day, index) {
-            if (horarioData[day]) {
-                horarioData[day].splice(index, 1);
-                saveHorario();
-                renderHorario();
-                renderWeekPreview();
+        function openAddActivity(prefillHour) {
+            addActivityState = { type: null, duration: 1 };
+            document.getElementById('activityTitle').value = '';
+            // Populate hour select
+            const sel = document.getElementById('activityHour');
+            sel.innerHTML = '';
+            for (let h = 6; h <= 23; h++) {
+                const opt = document.createElement('option');
+                opt.value = h;
+                opt.textContent = formatHour12(h);
+                if (h === (prefillHour || 9)) opt.selected = true;
+                sel.appendChild(opt);
             }
+            // Activity type grid
+            const grid = document.getElementById('activityTypeGrid');
+            grid.innerHTML = ACTIVITY_TYPES.map(at => `
+                <div id="atype_${at.id}" onclick="selectActivityType('${at.id}')" style="padding:10px 6px; border-radius:12px; background:${at.color}15; border:2px solid ${at.color}22; text-align:center; cursor:pointer; transition:all 0.2s;">
+                    <div style="font-size:1.3rem;">${at.emoji}</div>
+                    <div style="font-size:0.6rem; color:${at.color}; font-weight:600; margin-top:4px; line-height:1.2;">${at.label}</div>
+                </div>
+            `).join('');
+            // Duration buttons
+            const durDiv = document.getElementById('activityDurationBtns');
+            durDiv.innerHTML = [1,2,3,4].map(d => `
+                <button id="dur_${d}" onclick="selectDuration(${d})" style="flex:1; padding:10px; border-radius:12px; background:${d === 1 ? '#C9A84C22' : 'rgba(255,255,255,0.06)'}; border:2px solid ${d === 1 ? '#C9A84C' : 'rgba(255,255,255,0.08)'}; color:${d === 1 ? '#C9A84C' : 'var(--text-dim)'}; font-weight:700; font-size:0.85rem; cursor:pointer;">${d}h</button>
+            `).join('');
+            validateAddForm();
+            document.getElementById('addActivityModal').classList.add('active');
+        }
+
+        function selectActivityType(id) {
+            addActivityState.type = id;
+            ACTIVITY_TYPES.forEach(at => {
+                const el = document.getElementById('atype_' + at.id);
+                if (el) {
+                    const sel = at.id === id;
+                    el.style.borderColor = sel ? at.color : at.color + '22';
+                    el.style.background = sel ? at.color + '33' : at.color + '15';
+                    el.style.boxShadow = sel ? '0 0 12px ' + at.color + '44' : 'none';
+                }
+            });
+            validateAddForm();
+        }
+
+        function selectDuration(d) {
+            addActivityState.duration = d;
+            [1,2,3,4].forEach(dd => {
+                const el = document.getElementById('dur_' + dd);
+                if (el) {
+                    const sel = dd === d;
+                    el.style.borderColor = sel ? '#C9A84C' : 'rgba(255,255,255,0.08)';
+                    el.style.background = sel ? '#C9A84C22' : 'rgba(255,255,255,0.06)';
+                    el.style.color = sel ? '#C9A84C' : 'var(--text-dim)';
+                }
+            });
+        }
+
+        function validateAddForm() {
+            const btn = document.getElementById('addActivityBtn');
+            const title = document.getElementById('activityTitle').value.trim();
+            const valid = addActivityState.type && title.length > 0;
+            btn.style.opacity = valid ? '1' : '0.4';
+            btn.style.pointerEvents = valid ? 'auto' : 'none';
+        }
+
+        function confirmAddActivity() {
+            const title = document.getElementById('activityTitle').value.trim();
+            const hour = parseInt(document.getElementById('activityHour').value);
+            if (!addActivityState.type || !title) return;
+            const key = DIAS[currentHorarioDay].toLowerCase();
+            if (!horarioData[key]) horarioData[key] = [];
+            horarioData[key].push({ type: addActivityState.type, title, hour, duration: addActivityState.duration });
+            horarioData[key].sort((a, b) => a.hour - b.hour);
+            saveHorario();
+            document.getElementById('addActivityModal').classList.remove('active');
+            const { todayIndex } = getWeekRange();
+            renderDayTimeline(currentHorarioDay, todayIndex);
+        }
+
+        function deleteActivity(dayIndex, hour) {
+            const key = DIAS[dayIndex].toLowerCase();
+            if (!horarioData[key]) return;
+            horarioData[key] = horarioData[key].filter(e => e.hour !== hour);
+            saveHorario();
+            const { todayIndex } = getWeekRange();
+            renderDayTimeline(dayIndex, todayIndex);
         }
 
         async function saveHorario() {
@@ -2105,6 +2339,7 @@ window.addEventListener('unhandledrejection', function(e) {
         }
 
         // ============ INIT ============
+        document.getElementById('activityTitle').addEventListener('input', validateAddForm);
         fetchData();
         setInterval(fetchData, 8000);
     </script>
