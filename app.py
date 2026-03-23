@@ -73,6 +73,7 @@ ROUTE_MAP = {
     '/api/pipeline':   ('artist_pipeline', {"compositores": [], "producciones": [], "videoclips": []}),
     '/api/equipo':     ('artist_equipo', []),
     '/api/ideas':      ('artist_ideas', []),
+    '/api/horario':    ('artist_horario', {"lunes": [], "martes": [], "miercoles": [], "jueves": [], "viernes": [], "sabado": [], "domingo": []}),
 }
 
 POST_ROUTES = set(ROUTE_MAP.keys())

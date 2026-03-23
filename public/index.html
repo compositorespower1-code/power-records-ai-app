@@ -800,11 +800,11 @@
         </header>
 
         <!-- BANNER -->
-        <div class="banner-card" onclick="openView('fandomView')">
-            <div class="banner-icon">💜</div>
+        <div class="banner-card" onclick="openView('horarioView')">
+            <div class="banner-icon">📅</div>
             <div class="banner-text">
-                <div class="banner-title" data-es="FANDOM" data-en="FANDOM">FANDOM</div>
-                <div class="banner-desc" data-es="Conecta con tus fans y comunidad" data-en="Connect with your fans and community">Conecta con tus fans y comunidad</div>
+                <div class="banner-title" data-es="MI HORARIO" data-en="MY SCHEDULE">MI HORARIO</div>
+                <div class="banner-desc" data-es="Organiza tu semana y mejora tu orden" data-en="Organize your week and improve your flow">Organiza tu semana y mejora tu orden</div>
             </div>
             <div class="banner-arrow">›</div>
         </div>
@@ -865,11 +865,9 @@
             <div class="menu-arrow">›</div>
         </div>
 
-        <!-- RECENT FANDOM -->
-        <div class="section-label" style="margin-top: 28px;" data-es="Fandom Reciente" data-en="Recent Fandom">Fandom Reciente</div>
-        <div id="fandomContainer" class="leads-container">
-            <div style="font-size: 0.8rem; opacity: 0.4; padding: 10px;" data-es="Esperando actividad de fans..." data-en="Waiting for fan activity...">Esperando actividad de fans...</div>
-        </div>
+        <!-- WEEK PREVIEW -->
+        <div class="section-label" style="margin-top: 28px;" id="weekPreviewLabel">Semana Actual</div>
+        <div id="weekPreviewDays" style="display:grid; grid-template-columns:repeat(7,1fr); gap:6px; margin-bottom:16px;"></div>
     </div>
 
     <!-- ============ VIEW MODALS ============ -->
@@ -990,19 +988,15 @@
         <div class="view-content" id="ideasContent"></div>
     </div>
 
-    <!-- FANDOM -->
-    <div class="view-modal" id="fandomView">
+    <!-- MI HORARIO -->
+    <div class="view-modal" id="horarioView">
         <div class="view-header">
-            <button class="back-btn" onclick="closeView('fandomView')">←</button>
-            <h2 class="view-title" data-es="Fandom" data-en="Fandom">Fandom</h2>
+            <button class="back-btn" onclick="closeView('horarioView')">←</button>
+            <h2 class="view-title" id="horarioTitle">MI HORARIO</h2>
         </div>
-        <div class="view-content" id="fandomFullContent">
-            <div class="section-header" data-es="Engagement de Fans" data-en="Fan Engagement">Engagement de Fans</div>
-            <div id="fandomStats" class="stats-grid"></div>
-            <div class="section-header" data-es="Actividad Reciente" data-en="Recent Activity">Actividad Reciente</div>
-            <div id="fandomFullContainer" class="leads-container">
-                <div style="font-size: 0.8rem; opacity: 0.4; padding: 10px;">Esperando actividad de fans...</div>
-            </div>
+        <div class="view-content" id="horarioContent">
+            <div id="horarioWeekLabel" style="text-align:center; font-size:1.1rem; font-weight:700; margin-bottom:20px; background:linear-gradient(135deg,#a855f7,#06b6d4); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;"></div>
+            <div id="horarioDays"></div>
         </div>
     </div>
 
@@ -1083,7 +1077,7 @@ window.addEventListener('unhandledrejection', function(e) {
         let pipelineData = null;
         let equipoData = null;
         let ideasData = null;
-        let fandomData = [];
+        let horarioData = {};
         let promptsData = [];
         let clockInterval = null;
         let currentPipeTab = 'compositores';
@@ -1124,7 +1118,7 @@ window.addEventListener('unhandledrejection', function(e) {
             'grabadoraView': renderGrabadora,
             'equipoView': fetchEquipo,
             'ideasView': fetchIdeas,
-            'fandomView': fetchFandom,
+            'horarioView': renderHorario,
         };
 
         function openView(id) {
@@ -1219,10 +1213,10 @@ window.addEventListener('unhandledrejection', function(e) {
     document.body.classList.add('syncing');
     try { await fetchArtist(); } catch(e) { console.error('[fetchData] artist error:', e); }
     try {
-        const leadRes = await fetch('/api/leads');
-        const leadData = await leadRes.json();
-        if (Array.isArray(leadData)) { fandomData = leadData; renderFandom(leadData); }
-    } catch(e) { console.error('[fetchData] leads error:', e); }
+        const horarioRes = await fetch('/api/horario');
+        const hData = await horarioRes.json();
+        if (hData) { horarioData = hData; renderWeekPreview(); }
+    } catch(e) { console.error('[fetchData] horario error:', e); }
     try {
         const promptRes = await fetch('/api/prompts');
         const promptData = await promptRes.json();
@@ -1231,29 +1225,113 @@ window.addEventListener('unhandledrejection', function(e) {
     document.body.classList.remove('syncing');
 }
 
-        function renderFandom(leads) {
-            const c = document.getElementById('fandomContainer');
-            const c2 = document.getElementById('fandomFullContainer');
-            if (!leads || leads.length === 0) return;
-            const html = leads.map(l => `
-                <div class="lead-card">
-                    <div class="lead-info"><b>${esc(l.name || 'Fan')}</b><br><span>${esc(l.source || 'Instagram')}</span></div>
-                    <div class="lead-time">${esc(l.time || '--:--')}</div>
-                </div>`).join('');
-            c.innerHTML = html;
-            if (c2) c2.innerHTML = html;
+        // ============ HORARIO / SCHEDULE ============
+        const DIAS = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'];
+        const DIAS_EN = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+        const DIA_COLORS = ['#a855f7','#06d6a0','#3b82f6','#f97316','#ec4899','#14b8a6','#eab308'];
+
+        function getWeekRange() {
+            const now = new Date();
+            const day = now.getDay();
+            const mondayOffset = day === 0 ? -6 : 1 - day;
+            const monday = new Date(now);
+            monday.setDate(now.getDate() + mondayOffset);
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            const months_es = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+            const months_en = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const isEn = document.documentElement.lang === 'en';
+            const ms = isEn ? months_en : months_es;
+            const label = isEn
+                ? `Week of ${ms[monday.getMonth()]} ${monday.getDate()} - ${ms[sunday.getMonth()]} ${sunday.getDate()}`
+                : `Semana del ${monday.getDate()} al ${sunday.getDate()} de ${ms[monday.getMonth()]}`;
+            return { monday, label, todayIndex: (day === 0 ? 6 : day - 1) };
         }
 
-        async function fetchFandom() {
-            const data = await getJSON('/api/leads');
-            if (Array.isArray(data)) { fandomData = data; renderFandom(data); }
-            const statsEl = document.getElementById('fandomStats');
-            const total = fandomData.length;
-            const today = fandomData.filter(l => l.time).length;
-            statsEl.innerHTML = `
-                <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Total Fans</div></div>
-                <div class="stat-card"><div class="stat-value">${today}</div><div class="stat-label">Recientes</div></div>
-            `;
+        function renderWeekPreview() {
+            const { label, todayIndex } = getWeekRange();
+            const lbl = document.getElementById('weekPreviewLabel');
+            if (lbl) lbl.textContent = label;
+            const c = document.getElementById('weekPreviewDays');
+            if (!c) return;
+            c.innerHTML = DIAS.map((d, i) => {
+                const isToday = i === todayIndex;
+                const tasks = (horarioData[d.toLowerCase()] || []);
+                const count = tasks.length;
+                return `<div style="text-align:center; padding:8px 2px; border-radius:14px; background:${isToday ? DIA_COLORS[i] + '33' : 'rgba(255,255,255,0.04)'}; border:1.5px solid ${isToday ? DIA_COLORS[i] : 'rgba(255,255,255,0.06)'}; ${isToday ? 'box-shadow:0 0 12px ' + DIA_COLORS[i] + '44;' : ''} cursor:pointer;" onclick="openView('horarioView')">
+                    <div style="font-size:0.6rem; font-weight:800; color:${isToday ? DIA_COLORS[i] : '#8a8a9a'}; text-transform:uppercase;">${d.substring(0,3)}</div>
+                    <div style="font-size:0.7rem; margin-top:2px; color:${isToday ? '#fff' : '#555'};">${count > 0 ? count : '-'}</div>
+                </div>`;
+            }).join('');
+        }
+
+        async function renderHorario() {
+            const data = await getJSON('/api/horario');
+            if (data) horarioData = data;
+            const { label, todayIndex } = getWeekRange();
+            document.getElementById('horarioWeekLabel').textContent = label;
+            const container = document.getElementById('horarioDays');
+            container.innerHTML = DIAS.map((dia, i) => {
+                const isToday = i === todayIndex;
+                const key = dia.toLowerCase();
+                const tasks = horarioData[key] || [];
+                const color = DIA_COLORS[i];
+                return `
+                <div style="margin-bottom:16px; border-radius:18px; background:rgba(255,255,255,0.04); border:1.5px solid ${isToday ? color : 'rgba(255,255,255,0.08)'}; overflow:hidden; ${isToday ? 'box-shadow:0 0 20px ' + color + '33;' : ''}">
+                    <div style="padding:14px 16px; display:flex; align-items:center; justify-content:space-between; background:${isToday ? color + '22' : 'transparent'};">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div style="width:10px; height:10px; border-radius:50%; background:${color}; ${isToday ? 'box-shadow:0 0 10px ' + color + ';' : 'opacity:0.5;'}"></div>
+                            <span style="font-weight:800; font-size:0.95rem; color:${isToday ? '#fff' : '#8a8a9a'};">${dia}</span>
+                            ${isToday ? '<span style="font-size:0.6rem; background:' + color + '; color:#fff; padding:2px 8px; border-radius:10px; font-weight:700;">HOY</span>' : ''}
+                        </div>
+                        <button onclick="addHorarioTask('${key}')" style="background:${color}22; border:1px solid ${color}44; color:${color}; width:28px; height:28px; border-radius:8px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;">+</button>
+                    </div>
+                    <div id="horario_${key}" style="padding:0 16px 12px;">
+                        ${tasks.length === 0 ? '<div style="font-size:0.75rem; opacity:0.3; padding:6px 0;">Sin tareas</div>' : tasks.map((t, ti) => `
+                            <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+                                <div onclick="toggleHorarioTask('${key}',${ti})" style="width:20px; height:20px; border-radius:6px; border:2px solid ${t.done ? color : 'rgba(255,255,255,0.15)'}; background:${t.done ? color : 'transparent'}; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.7rem; color:#fff;">${t.done ? '✓' : ''}</div>
+                                <span style="font-size:0.8rem; color:${t.done ? '#555' : '#ccc'}; ${t.done ? 'text-decoration:line-through;' : ''} flex:1;">${esc(t.text)}</span>
+                                <button onclick="deleteHorarioTask('${key}',${ti})" style="background:none; border:none; color:#555; font-size:0.8rem; cursor:pointer;">✕</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function addHorarioTask(day) {
+            const isEn = document.documentElement.lang === 'en';
+            const text = prompt(isEn ? 'New task for ' + day + ':' : 'Nueva tarea para ' + day + ':');
+            if (!text || !text.trim()) return;
+            if (!horarioData[day]) horarioData[day] = [];
+            horarioData[day].push({ text: text.trim(), done: false });
+            saveHorario();
+            renderHorario();
+            renderWeekPreview();
+        }
+
+        function toggleHorarioTask(day, index) {
+            if (horarioData[day] && horarioData[day][index]) {
+                horarioData[day][index].done = !horarioData[day][index].done;
+                saveHorario();
+                renderHorario();
+                renderWeekPreview();
+            }
+        }
+
+        function deleteHorarioTask(day, index) {
+            if (horarioData[day]) {
+                horarioData[day].splice(index, 1);
+                saveHorario();
+                renderHorario();
+                renderWeekPreview();
+            }
+        }
+
+        async function saveHorario() {
+            try {
+                await fetch('/api/horario', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(horarioData) });
+            } catch(e) { console.error('Error saving horario:', e); }
         }
 
         function renderPrompts(prompts) {
