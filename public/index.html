@@ -635,6 +635,7 @@
             overflow: hidden;
         }
         .cassette.is-recording { border-color: rgba(239,68,68,0.5); box-shadow: 0 8px 40px rgba(239,68,68,0.25), inset 0 1px 0 rgba(255,255,255,0.05); }
+        .is-recording { box-shadow: 0 8px 40px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.2) !important; }
         .cassette-label {
             position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
             background: linear-gradient(135deg, #2d1b4e, #1a1030);
@@ -1980,37 +1981,12 @@ window.addEventListener('unhandledrejection', function(e) {
         function renderGrabadora() {
             const c = document.getElementById('grabadoraContent');
             let html = `
-                <div class="recorder-section">
-                    <div class="cassette-wrap">
-                        <div class="cassette" id="cassetteBody">
-                            <div class="cassette-label">POWER RECORDS AI</div>
-                            <div class="cassette-window">
-                                <div class="tape-bridge"></div>
-                                <div class="tape-bridge tape-bridge-b"></div>
-                                <div class="spool">
-                                    <div class="spool-inner">
-                                        <div class="spool-spoke"></div>
-                                        <div class="spool-spoke"></div>
-                                        <div class="spool-spoke"></div>
-                                    </div>
-                                </div>
-                                <div class="spool">
-                                    <div class="spool-inner">
-                                        <div class="spool-spoke"></div>
-                                        <div class="spool-spoke"></div>
-                                        <div class="spool-spoke"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cassette-holes"><div class="cassette-hole"></div><div class="cassette-hole"></div></div>
-                            <div class="cassette-screw screw-tl"></div>
-                            <div class="cassette-screw screw-tr"></div>
-                            <div class="cassette-screw screw-bl"></div>
-                            <div class="cassette-screw screw-br"></div>
-                            <div class="rec-light"></div>
-                        </div>
+                <div class="recorder-section" style="text-align:center;">
+                    <div id="cassetteBody" style="position:relative; display:inline-block; max-width:100%; border-radius:16px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.5); transition:box-shadow 0.3s;">
+                        <img src="img/cassette.gif" alt="Power Records Cassette" style="width:100%; max-width:360px; display:block; border-radius:16px;">
+                        <div class="rec-light" style="position:absolute; top:12px; left:12px;"></div>
                     </div>
-                    <div class="rec-timer" id="recTimer">0:00</div>
+                    <div class="rec-timer" id="recTimer" style="margin-top:16px;">0:00</div>
                     <div class="rec-status" id="recStatus">${currentLang === 'en' ? 'Tap to record your idea' : 'Toca para grabar tu idea'}</div>
                     <div class="rec-controls">
                         <button class="rec-btn-c rec-main" id="recBtn" onclick="toggleRecording()">
