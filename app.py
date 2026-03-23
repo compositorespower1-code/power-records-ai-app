@@ -5,6 +5,7 @@ import json
 import datetime
 import urllib.request
 import urllib.parse
+import threading
 
 PORT = int(os.environ.get('PORT', 3001))
 BASE_DIR = os.path.dirname(__file__)
@@ -95,6 +96,9 @@ class ArtistHandler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
+        if self.path == '/health':
+            self.send_json({"status": "ok"})
+            return
         if self.path in ROUTE_MAP:
             key, default = ROUTE_MAP[self.path]
             data = supabase_read(key, default)
@@ -139,9 +143,24 @@ class ArtistHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
 
+def keep_alive():
+    """Ping self every 13 minutes to prevent Render free tier from sleeping."""
+    import time
+    url = f"http://localhost:{PORT}/health"
+    while True:
+        time.sleep(780)
+        try:
+            urllib.request.urlopen(url, timeout=5)
+            print("[keep-alive] ping OK")
+        except Exception:
+            pass
+
+
 if __name__ == "__main__":
     os.chdir(BASE_DIR)
     print(f"Supabase: {'connected' if SUPABASE_URL else 'NOT SET'}")
+    threading.Thread(target=keep_alive, daemon=True).start()
+    print("[keep-alive] auto-ping every 13 min enabled")
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), ArtistHandler) as httpd:
         print(f"Power Records AI Artist App en puerto {PORT}")
