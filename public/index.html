@@ -1983,7 +1983,7 @@ window.addEventListener('unhandledrejection', function(e) {
             let html = `
                 <div class="recorder-section" style="text-align:center;">
                     <div id="cassetteBody" style="position:relative; display:inline-block; max-width:100%; border-radius:16px; overflow:hidden; box-shadow:0 8px 40px rgba(0,0,0,0.5); transition:box-shadow 0.3s;">
-                        <img src="img/cassette.gif" alt="Power Records Cassette" style="width:100%; max-width:360px; display:block; border-radius:16px;">
+                        <img id="cassetteImg" src="img/cassette-still.jpg" alt="Power Records Cassette" style="width:100%; max-width:360px; display:block; border-radius:16px;">
                         <div class="rec-light" style="position:absolute; top:12px; left:12px;"></div>
                     </div>
                     <div class="rec-timer" id="recTimer" style="margin-top:16px;">0:00</div>
@@ -2055,6 +2055,8 @@ window.addEventListener('unhandledrejection', function(e) {
                 const cassette = document.getElementById('cassetteBody');
                 btn.classList.add('recording');
                 if (cassette) cassette.classList.add('is-recording');
+                const cImg = document.getElementById('cassetteImg');
+                if (cImg) cImg.src = 'img/cassette.gif';
                 icon.textContent = '⏹';
                 status.textContent = currentLang === 'en' ? 'Recording...' : 'Grabando...';
                 recTimerInterval = setInterval(() => {
@@ -2074,6 +2076,8 @@ window.addEventListener('unhandledrejection', function(e) {
             clearInterval(recTimerInterval);
             const cassette = document.getElementById('cassetteBody');
             if (cassette) cassette.classList.remove('is-recording');
+            const cImg = document.getElementById('cassetteImg');
+            if (cImg) cImg.src = 'img/cassette-still.jpg';
         }
 
         function playRecording(index) {
