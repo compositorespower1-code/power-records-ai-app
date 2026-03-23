@@ -586,40 +586,76 @@
 
         /* ============ AGENTS GRID ============ */
         .agents-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding-bottom: 16px;
             margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+            scroll-snap-type: x mandatory;
         }
+        .agents-grid::-webkit-scrollbar { display: none; }
         .agent-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-sm);
-            padding: 16px 10px;
-            text-align: center;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 65%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            min-width: 200px;
+            max-width: 200px;
+            height: 300px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
-        .agent-card:active { transform: scale(0.96); border-color: var(--accent); box-shadow: 0 0 20px rgba(168,85,247,0.3); }
-        .agent-card.locked { opacity: 0.35; pointer-events: none; }
+        .agent-card:active { transform: scale(0.96); border-color: rgba(255,255,255,0.25); box-shadow: 0 0 30px rgba(168,85,247,0.2); }
+        .agent-card.locked { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
         .agent-card.locked::after {
             content: '🔒';
             position: absolute;
-            top: 8px; right: 8px;
-            font-size: 0.7rem;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%);
+            font-size: 2rem;
+            z-index: 5;
         }
         .agent-photo {
-            width: 56px; height: 56px;
-            border-radius: 50%;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             object-fit: cover;
-            margin: 0 auto 8px;
-            display: block;
-            border: 2px solid rgba(255,255,255,0.1);
+            z-index: 0;
         }
-        .agent-name { font-size: 0.72rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
-        .agent-role { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .agent-info {
+            position: relative;
+            z-index: 2;
+            padding: 16px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 60%, transparent 100%);
+        }
+        .agent-role-pill {
+            position: absolute;
+            top: 12px; left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            background: rgba(0,0,0,0.55);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.55rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .agent-name { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .agent-desc { font-size: 0.65rem; color: rgba(255,255,255,0.5); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
         /* ============ CASSETTE RECORDER ============ */
         .recorder-section { text-align: center; padding: 10px 0; }
@@ -1131,15 +1167,15 @@ window.addEventListener('unhandledrejection', function(e) {
 
         // ============ AGENTS ============
         const AGENTS = [
-            { id: 'smith', name: 'Smith Varela', role: 'Manager', color: '#ff9100', img: 'img/smith.jpg', plans: ['motor','creator','pro','elite'] },
-            { id: 'claudia', name: 'Claudia Matisse', role: 'Branding', color: '#e040fb', img: 'img/claudia.jpg', plans: ['motor','creator','pro','elite'] },
-            { id: 'damian', name: 'Damian La Fonte', role: 'Booking', color: '#ff6d00', img: 'img/damian.jpg', plans: ['pro','elite'] },
-            { id: 'valeria', name: 'Valeria Dominguez', role: 'Styling', color: '#f50057', img: 'img/valeria.jpg', plans: ['creator','pro','elite'] },
-            { id: 'sofia', name: 'Sofia Mendoza', role: 'Fandom', color: '#d500f9', img: 'img/sofia.jpg', plans: ['creator','pro','elite'] },
-            { id: 'marcos', name: 'Marcos Rivera', role: 'Instagram', color: '#e91e63', img: 'img/marcos.jpg', plans: ['creator','pro','elite'] },
-            { id: 'luna', name: 'Luna Salazar', role: 'TikTok', color: '#00e5ff', img: 'img/luna.jpg', plans: ['creator','pro','elite'] },
-            { id: 'daniel', name: 'Daniel Herrera', role: 'YouTube', color: '#ff1744', img: 'img/daniel.jpg', plans: ['creator','pro','elite'] },
-            { id: 'mateo', name: 'Mateo Valenzuela', role: 'Spotify', color: '#1db954', img: 'img/mateo.jpg', plans: ['creator','pro','elite'] },
+            { id: 'smith', name: 'Smith Varela', role: 'Strategic Management', color: '#ff9100', img: 'img/smith.jpg', plans: ['motor','creator','pro','elite'], desc: 'A strategic leader at Power Universe AI who designs artistic and business ecosystems. With global resonance and industry clarity, he builds...' },
+            { id: 'claudia', name: 'Claudia Matisse', role: 'Branding Management / Brand Director', color: '#e040fb', img: 'img/claudia.jpg', plans: ['motor','creator','pro','elite'], desc: 'She leads the strategic vision of your artist brand, ensuring every visual and message resonates with your core DNA and connects globally. Focuses...' },
+            { id: 'damian', name: 'Damian La Fonte', role: 'Strategic Partnerships', color: '#ff6d00', img: 'img/damian.jpg', plans: ['pro','elite'], desc: 'He creates strategic alliances with brands and sponsors to expand your reach. With his business vision, he connects artists to a global ecosyste...' },
+            { id: 'valeria', name: 'Valeria Dominguez', role: 'Styling & Image', color: '#f50057', img: 'img/valeria.jpg', plans: ['creator','pro','elite'], desc: 'She crafts your visual identity across every appearance. From stage outfits to press looks, she ensures your image tells your story...' },
+            { id: 'sofia', name: 'Sofia Mendoza', role: 'Fandom & Community', color: '#d500f9', img: 'img/sofia.jpg', plans: ['creator','pro','elite'], desc: 'She builds and nurtures your fan community. From engagement strategies to superfan programs, she turns listeners into a movement...' },
+            { id: 'marcos', name: 'Marcos Rivera', role: 'Instagram Strategy', color: '#e91e63', img: 'img/marcos.jpg', plans: ['creator','pro','elite'], desc: 'He designs your Instagram presence with visual storytelling, reels strategy, and growth tactics that build authentic connection...' },
+            { id: 'luna', name: 'Luna Salazar', role: 'TikTok Strategy', color: '#00e5ff', img: 'img/luna.jpg', plans: ['creator','pro','elite'], desc: 'She masters viral content and trends on TikTok. With creative hooks and timing, she positions your music in front of millions...' },
+            { id: 'daniel', name: 'Daniel Herrera', role: 'YouTube Strategy', color: '#ff1744', img: 'img/daniel.jpg', plans: ['creator','pro','elite'], desc: 'He manages your YouTube channel with SEO, thumbnails, and content strategy that grows subscribers and watch time consistently...' },
+            { id: 'mateo', name: 'Mateo Valenzuela', role: 'Spotify & DSP Strategy', color: '#1db954', img: 'img/mateo.jpg', plans: ['creator','pro','elite'], desc: 'He optimizes your presence across streaming platforms. From playlist pitching to release strategy, he maximizes your streams...' },
         ];
 
         // ============ RECORDER STATE ============
@@ -1837,17 +1873,21 @@ window.addEventListener('unhandledrejection', function(e) {
             const c = document.getElementById('dreamTeamContent');
             const plan = artistData.plan || 'motor';
             let html = `<div style="text-align:center; margin-bottom:20px;">
-                <div style="font-size:1.1rem; font-weight:800;">${currentLang === 'en' ? 'Your AI Team' : 'Tu Equipo AI'}</div>
-                <div style="font-size:0.75rem; color:var(--text-dim); margin-top:4px;">${PLAN_NAMES[plan]}</div>
+                <div style="font-size:0.6rem; color:#C9A84C; font-weight:700; letter-spacing:2px; text-transform:uppercase;">POWER RECORDS AI</div>
+                <div style="font-size:1.2rem; font-weight:900; margin-top:4px;">${currentLang === 'en' ? 'MY DREAM TEAM' : 'MY DREAM TEAM'}</div>
+                <div style="font-size:0.75rem; color:var(--text-dim); margin-top:4px;">${PLAN_NAMES[plan]} · ${AGENTS.filter(a => a.plans.includes(plan)).length} ${currentLang === 'en' ? 'agents available' : 'agentes disponibles'}</div>
             </div>
             <div class="agents-grid">`;
-            AGENTS.forEach(a => {
+            AGENTS.forEach((a, i) => {
                 const available = a.plans.includes(plan);
                 html += `
-                    <div class="agent-card ${available ? '' : 'locked'}" onclick="${available ? `openAgentDetail('${a.id}')` : ''}" style="border-color: ${available ? a.color + '33' : 'var(--card-border)'};">
+                    <div class="agent-card ${available ? '' : 'locked'}" onclick="${available ? `openAgentDetail('${a.id}')` : ''}" style="animation:fadeSlideIn 0.4s ease-out ${i * 0.08}s both;">
                         <img class="agent-photo" src="${a.img}" alt="${a.name}" onerror="this.src='img/banner.jpg'">
-                        <div class="agent-name">${a.name}</div>
-                        <div class="agent-role" style="color:${a.color};">${a.role}</div>
+                        <div class="agent-role-pill">${a.role}</div>
+                        <div class="agent-info">
+                            <div class="agent-name">${a.name}</div>
+                            <div class="agent-desc">${a.desc || ''}</div>
+                        </div>
                     </div>`;
             });
             html += '</div>';
