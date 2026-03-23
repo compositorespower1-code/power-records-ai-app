@@ -943,7 +943,17 @@
         <div class="profile-form">
             <h3>Perfil de Artista</h3>
             <input class="form-input" id="pf_name" placeholder="Nombre del artista">
-            <input class="form-input" id="pf_photo" placeholder="URL de foto de perfil">
+            <!-- Photo upload -->
+            <div style="text-align:center;">
+                <div id="photoPreview" style="width:100px; height:100px; border-radius:50%; margin:0 auto 12px; border:2.5px solid var(--accent); overflow:hidden; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center;">
+                    <img id="photoPreviewImg" src="img/banner.jpg" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                </div>
+                <label style="display:inline-block; background:linear-gradient(135deg, #9333ea, #a855f7); color:#fff; padding:10px 24px; border-radius:12px; font-weight:700; font-size:0.8rem; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;">
+                    Cambiar Foto
+                    <input type="file" id="pf_photo_file" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+                </label>
+            </div>
+            <input type="hidden" id="pf_photo">
             <select class="form-input" id="pf_plan">
                 <option value="motor">Plan Motor</option>
                 <option value="creator">Plan Creator</option>
@@ -1066,12 +1076,39 @@ window.addEventListener('unhandledrejection', function(e) {
             role.textContent = PLAN_NAMES[artistData.plan] || 'Plan Motor';
         }
 
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX = 300;
+                    let w = img.width, h = img.height;
+                    if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+                    else { w = Math.round(w * MAX / h); h = MAX; }
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('pf_photo').value = dataUrl;
+                    document.getElementById('photoPreviewImg').src = dataUrl;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
         function openProfileModal() {
             document.getElementById('pf_name').value = artistData.name || '';
             document.getElementById('pf_photo').value = artistData.photo || '';
             document.getElementById('pf_plan').value = artistData.plan || 'motor';
             document.getElementById('pf_recday').value = artistData.recording_day || '';
             document.getElementById('pf_rhythm').value = artistData.rhythm || 'enfocado';
+            const preview = document.getElementById('photoPreviewImg');
+            if (artistData.photo) preview.src = artistData.photo;
+            else preview.src = 'img/banner.jpg';
             document.getElementById('profileModal').classList.add('active');
         }
 
