@@ -612,52 +612,134 @@
         .agent-name { font-size: 0.72rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
         .agent-role { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* ============ RECORDER ============ */
-        .recorder-section { text-align: center; padding: 20px 0; }
-        .rec-btn {
-            width: 100px; height: 100px;
+        /* ============ CASSETTE RECORDER ============ */
+        .recorder-section { text-align: center; padding: 10px 0; }
+        .cassette-wrap { perspective: 600px; margin: 0 auto 16px; }
+        .cassette {
+            width: 290px; height: 180px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, #1a1a2e, #16162a, #0f0f1e);
+            border-radius: 14px;
+            border: 2px solid rgba(168,85,247,0.25);
+            position: relative;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+        .cassette.is-recording { border-color: rgba(239,68,68,0.5); box-shadow: 0 8px 40px rgba(239,68,68,0.25), inset 0 1px 0 rgba(255,255,255,0.05); }
+        .cassette-label {
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, #2d1b4e, #1a1030);
+            border: 1px solid rgba(168,85,247,0.2);
+            border-radius: 5px;
+            padding: 3px 14px;
+            font-size: 0.5rem; font-weight: 800;
+            color: rgba(168,85,247,0.7);
+            text-transform: uppercase; letter-spacing: 2px; white-space: nowrap;
+        }
+        .cassette-window {
+            position: absolute; top: 36px; left: 50%; transform: translateX(-50%);
+            width: 210px; height: 75px;
+            background: linear-gradient(145deg, #08080f, #0c0c16);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center; gap: 24px;
+            overflow: hidden;
+        }
+        .spool {
+            width: 48px; height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #dc2626, #ef4444);
-            border: 4px solid rgba(255,255,255,0.15);
-            color: #fff;
-            font-size: 2.2rem;
-            cursor: pointer;
+            border: 3px solid rgba(168,85,247,0.35);
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+        .is-recording .spool { border-color: rgba(239,68,68,0.5); animation: spoolSpin 1.2s linear infinite; }
+        @keyframes spoolSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spool-inner {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #2d1b4e 30%, #0f0f1e 100%);
+            border: 2px solid rgba(168,85,247,0.25);
+        }
+        .is-recording .spool-inner { border-color: rgba(239,68,68,0.35); }
+        .spool-spoke {
+            position: absolute; top: 50%; left: 50%;
+            width: 1px; height: 7px;
+            background: rgba(168,85,247,0.4);
+            transform-origin: 0 0;
+        }
+        .spool-spoke:nth-child(1) { transform: rotate(0deg) translateY(-3px); }
+        .spool-spoke:nth-child(2) { transform: rotate(120deg) translateY(-3px); }
+        .spool-spoke:nth-child(3) { transform: rotate(240deg) translateY(-3px); }
+        .tape-bridge {
+            position: absolute; top: 8px; left: 28px; right: 28px;
+            height: 1px; background: rgba(168,85,247,0.12);
+        }
+        .tape-bridge-b { top: auto; bottom: 8px; }
+        .is-recording .tape-bridge { background: rgba(239,68,68,0.15); }
+        .cassette-holes {
+            position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 44px;
+        }
+        .cassette-hole {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #060610; border: 1px solid rgba(255,255,255,0.04);
+        }
+        .cassette-screw {
+            position: absolute; width: 5px; height: 5px; border-radius: 50%;
+            background: linear-gradient(135deg, #2a2a3a, #1a1a2a);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .screw-tl { top: 7px; left: 7px; }
+        .screw-tr { top: 7px; right: 7px; }
+        .screw-bl { bottom: 7px; left: 7px; }
+        .screw-br { bottom: 7px; right: 7px; }
+        .rec-light {
+            position: absolute; top: 12px; right: 14px;
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #222; transition: all 0.3s;
+        }
+        .is-recording .rec-light { background: #ef4444; animation: recBlink 0.7s infinite; }
+        @keyframes recBlink { 0%,100% { opacity:1; box-shadow: 0 0 8px #ef4444; } 50% { opacity:0.2; box-shadow:none; } }
+        .rec-controls { display: flex; justify-content: center; gap: 14px; margin: 14px 0 6px; }
+        .rec-btn-c {
+            width: 52px; height: 52px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.08);
+            background: linear-gradient(145deg, #1a1a2e, #12122a);
+            color: #fff; font-size: 1.2rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
             transition: all 0.2s;
-            box-shadow: 0 4px 24px rgba(220, 38, 38, 0.4);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
         }
-        .rec-btn:active { transform: scale(0.95); }
-        .rec-btn.recording {
-            animation: recPulse 1s infinite;
-            box-shadow: 0 0 40px rgba(220, 38, 38, 0.7);
+        .rec-btn-c:active { transform: scale(0.92); }
+        .rec-btn-c.rec-main {
+            width: 62px; height: 62px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border: 3px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 24px rgba(220,38,38,0.4);
+            font-size: 1.6rem;
         }
+        .rec-btn-c.rec-main.recording { animation: recPulse 1s infinite; box-shadow: 0 0 40px rgba(220,38,38,0.7); }
         @keyframes recPulse {
             0% { box-shadow: 0 0 20px rgba(220,38,38,0.4); }
             50% { box-shadow: 0 0 50px rgba(220,38,38,0.8); transform: scale(1.05); }
             100% { box-shadow: 0 0 20px rgba(220,38,38,0.4); }
         }
-        .rec-status { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; }
-        .rec-timer { font-size: 1.8rem; font-weight: 900; color: #ef4444; font-variant-numeric: tabular-nums; }
+        .rec-status { font-size: 0.8rem; color: var(--text-dim); text-align: center; margin-bottom: 4px; }
+        .rec-timer { font-size: 1.6rem; font-weight: 900; color: #ef4444; font-variant-numeric: tabular-nums; text-align: center; margin-bottom: 4px; }
         .recording-item {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-sm);
             padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            display: flex; align-items: center; gap: 12px;
             margin-bottom: 10px;
         }
         .recording-play {
-            width: 40px; height: 40px;
-            border-radius: 50%;
+            width: 40px; height: 40px; border-radius: 50%;
             background: linear-gradient(135deg, #9333ea, #a855f7);
-            border: none; color: #fff;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
+            border: none; color: #fff; font-size: 1rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
         .recording-info { flex: 1; }
         .recording-name { font-size: 0.85rem; font-weight: 700; color: #fff; }
@@ -1582,11 +1664,42 @@ window.addEventListener('unhandledrejection', function(e) {
             const c = document.getElementById('grabadoraContent');
             let html = `
                 <div class="recorder-section">
-                    <div class="rec-status" id="recStatus">${currentLang === 'en' ? 'Tap to record' : 'Toca para grabar'}</div>
+                    <div class="cassette-wrap">
+                        <div class="cassette" id="cassetteBody">
+                            <div class="cassette-label">POWER RECORDS AI</div>
+                            <div class="cassette-window">
+                                <div class="tape-bridge"></div>
+                                <div class="tape-bridge tape-bridge-b"></div>
+                                <div class="spool">
+                                    <div class="spool-inner">
+                                        <div class="spool-spoke"></div>
+                                        <div class="spool-spoke"></div>
+                                        <div class="spool-spoke"></div>
+                                    </div>
+                                </div>
+                                <div class="spool">
+                                    <div class="spool-inner">
+                                        <div class="spool-spoke"></div>
+                                        <div class="spool-spoke"></div>
+                                        <div class="spool-spoke"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cassette-holes"><div class="cassette-hole"></div><div class="cassette-hole"></div></div>
+                            <div class="cassette-screw screw-tl"></div>
+                            <div class="cassette-screw screw-tr"></div>
+                            <div class="cassette-screw screw-bl"></div>
+                            <div class="cassette-screw screw-br"></div>
+                            <div class="rec-light"></div>
+                        </div>
+                    </div>
                     <div class="rec-timer" id="recTimer">0:00</div>
-                    <button class="rec-btn" id="recBtn" onclick="toggleRecording()">
-                        <span id="recIcon">⏺</span>
-                    </button>
+                    <div class="rec-status" id="recStatus">${currentLang === 'en' ? 'Tap to record your idea' : 'Toca para grabar tu idea'}</div>
+                    <div class="rec-controls">
+                        <button class="rec-btn-c rec-main" id="recBtn" onclick="toggleRecording()">
+                            <span id="recIcon">⏺</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="section-header" data-es="Grabaciones" data-en="Recordings">${currentLang === 'en' ? 'Recordings' : 'Grabaciones'}</div>
                 <div id="recordingsList">`;
@@ -1646,7 +1759,9 @@ window.addEventListener('unhandledrejection', function(e) {
                 const btn = document.getElementById('recBtn');
                 const icon = document.getElementById('recIcon');
                 const status = document.getElementById('recStatus');
+                const cassette = document.getElementById('cassetteBody');
                 btn.classList.add('recording');
+                if (cassette) cassette.classList.add('is-recording');
                 icon.textContent = '⏹';
                 status.textContent = currentLang === 'en' ? 'Recording...' : 'Grabando...';
                 recTimerInterval = setInterval(() => {
@@ -1664,6 +1779,8 @@ window.addEventListener('unhandledrejection', function(e) {
             if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); }
             isRecording = false;
             clearInterval(recTimerInterval);
+            const cassette = document.getElementById('cassetteBody');
+            if (cassette) cassette.classList.remove('is-recording');
         }
 
         function playRecording(index) {
