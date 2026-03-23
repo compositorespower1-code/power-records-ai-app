@@ -146,14 +146,17 @@ class ArtistHandler(http.server.SimpleHTTPRequestHandler):
 def keep_alive():
     """Ping self every 13 minutes to prevent Render free tier from sleeping."""
     import time
-    url = f"http://localhost:{PORT}/health"
+    public_url = "https://power-records-ai-app.onrender.com/health"
+    local_url = f"http://localhost:{PORT}/health"
     while True:
         time.sleep(780)
-        try:
-            urllib.request.urlopen(url, timeout=5)
-            print("[keep-alive] ping OK")
-        except Exception:
-            pass
+        for url in [public_url, local_url]:
+            try:
+                urllib.request.urlopen(url, timeout=10)
+                print(f"[keep-alive] ping OK: {url}")
+                break
+            except Exception:
+                pass
 
 
 if __name__ == "__main__":
