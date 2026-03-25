@@ -70,15 +70,15 @@
         .banner-card {
             background: linear-gradient(135deg, #4a044e, #701a75, #86198f);
             border-radius: var(--radius);
-            padding: 22px 24px;
+            padding: 20px 20px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
             margin-bottom: 28px;
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.3s;
         }
         .banner-card:active, .banner-card.glow { transform: scale(0.98); background: linear-gradient(135deg, #86198f, #a21caf, #c026d3); box-shadow: 0 0 40px rgba(192, 38, 211, 0.5); }
         .banner-card::after {
@@ -89,7 +89,8 @@
             background: rgba(255,255,255,0.08);
             border-radius: 50%;
         }
-        .banner-icon { font-size: 2.8rem; z-index: 1; }
+        .banner-icon { z-index: 1; width: 80px; height: 80px; flex-shrink: 0; }
+        .banner-icon img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5)); }
         .banner-text { z-index: 1; flex: 1; }
         .banner-title { font-weight: 800; font-size: 1.1rem; color: #fff; margin-bottom: 4px; }
         .banner-desc { font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.3; }
@@ -133,36 +134,39 @@
             background: rgba(0,0,0,0.15);
             border-radius: 50%;
         }
-        .vibe-purple { background: linear-gradient(145deg, #3b0764, #581c87, #6b21a8); box-shadow: 0 4px 16px rgba(88, 28, 135, 0.2); }
-        .vibe-green { background: linear-gradient(145deg, #022c22, #064e3b, #065f46); box-shadow: 0 4px 16px rgba(6, 78, 59, 0.2); }
-        .vibe-blue { background: linear-gradient(145deg, #172554, #1e3a8a, #1e40af); box-shadow: 0 4px 16px rgba(30, 58, 138, 0.2); }
-        .vibe-orange { background: linear-gradient(145deg, #431407, #7c2d12, #9a3412); box-shadow: 0 4px 16px rgba(124, 45, 18, 0.2); }
-        .vibe-pink { background: linear-gradient(145deg, #4a044e, #701a75, #86198f); box-shadow: 0 4px 16px rgba(112, 26, 117, 0.2); }
-        .vibe-teal { background: linear-gradient(145deg, #042f2e, #134e4a, #115e59); box-shadow: 0 4px 16px rgba(19, 78, 74, 0.2); }
-        .vibe-red { background: linear-gradient(145deg, #450a0a, #7f1d1d, #991b1b); box-shadow: 0 4px 16px rgba(127, 29, 29, 0.2); }
-        .vibe-purple:active, .vibe-purple.glow { background: linear-gradient(145deg, #7e22ce, #9333ea, #a855f7); box-shadow: 0 0 50px rgba(168, 85, 247, 0.6), 0 0 100px rgba(168, 85, 247, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
-        .vibe-green:active, .vibe-green.glow { background: linear-gradient(145deg, #047857, #059669, #10b981); box-shadow: 0 0 50px rgba(16, 185, 129, 0.6), 0 0 100px rgba(16, 185, 129, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
-        .vibe-blue:active, .vibe-blue.glow { background: linear-gradient(145deg, #1d4ed8, #2563eb, #3b82f6); box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 0 100px rgba(59, 130, 246, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
-        .vibe-orange:active, .vibe-orange.glow { background: linear-gradient(145deg, #c2410c, #ea580c, #f97316); box-shadow: 0 0 50px rgba(249, 115, 22, 0.6), 0 0 100px rgba(249, 115, 22, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-purple { background: linear-gradient(145deg, #1a1025, #221435, #2a1840); border: 1px solid rgba(168, 85, 247, 0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .vibe-green { background: linear-gradient(145deg, #0f1f1a, #132a22, #16352b); border: 1px solid rgba(16, 185, 129, 0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .vibe-blue { background: linear-gradient(145deg, #111827, #152040, #1a2850); border: 1px solid rgba(59, 130, 246, 0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .vibe-orange { background: linear-gradient(145deg, #1f1510, #2a1a12, #352015); border: 1px solid rgba(249, 115, 22, 0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .vibe-pink { background: linear-gradient(145deg, #1a1025, #251435, #301840); border: 1px solid rgba(236, 72, 153, 0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .vibe-teal { background: linear-gradient(145deg, #0f1f1e, #132a28, #163532); border: 1px solid rgba(19, 78, 74, 0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .vibe-red { background: linear-gradient(145deg, #1f1010, #2a1515, #351a1a); border: 1px solid rgba(239, 68, 68, 0.15); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .vibe-purple:active, .vibe-purple.glow { background: linear-gradient(145deg, #2a1840, #381e55, #45246a); border-color: rgba(168, 85, 247, 0.4); box-shadow: 0 0 40px rgba(168, 85, 247, 0.3), inset 0 0 30px rgba(168, 85, 247, 0.05); }
+        .vibe-green:active, .vibe-green.glow { background: linear-gradient(145deg, #16352b, #1a4535, #1e5540); border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 40px rgba(16, 185, 129, 0.3), inset 0 0 30px rgba(16, 185, 129, 0.05); }
+        .vibe-blue:active, .vibe-blue.glow { background: linear-gradient(145deg, #1a2850, #1e3565, #22427a); border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 0 40px rgba(59, 130, 246, 0.3), inset 0 0 30px rgba(59, 130, 246, 0.05); }
+        .vibe-orange:active, .vibe-orange.glow { background: linear-gradient(145deg, #352015, #452a1a, #553420); border-color: rgba(249, 115, 22, 0.4); box-shadow: 0 0 40px rgba(249, 115, 22, 0.3), inset 0 0 30px rgba(249, 115, 22, 0.05); }
         .vibe-icon {
-            font-size: 2.8rem;
             z-index: 1;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            width: 90px; height: 90px;
             transition: filter 0.2s, transform 0.2s;
         }
-        .vibe-card:active .vibe-icon, .vibe-card.glow .vibe-icon {
-            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)) drop-shadow(0 0 40px rgba(255,255,255,0.2));
-            transform: scale(1.15);
+        .vibe-icon img {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+            transition: filter 0.3s, transform 0.3s;
+        }
+        .vibe-card:active .vibe-icon img, .vibe-card.glow .vibe-icon img {
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.4)) drop-shadow(0 0 40px rgba(255,255,255,0.15));
+            transform: scale(1.12);
         }
         .vibe-title { font-size: 0.85rem; font-weight: 800; color: #fff; z-index: 1; text-transform: uppercase; letter-spacing: 0.5px; }
         .vibe-desc { font-size: 0.7rem; color: rgba(255,255,255,0.7); z-index: 1; line-height: 1.3; }
         .vibe-btn {
-            background: rgba(255,255,255,0.2);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, #C9A84C, #b8942e);
             border: none;
             color: #fff;
-            padding: 8px 24px;
+            padding: 8px 28px;
             border-radius: 10px;
             font-size: 0.75rem;
             font-weight: 700;
@@ -170,7 +174,10 @@
             margin-top: 4px;
             cursor: pointer;
             letter-spacing: 0.5px;
+            box-shadow: 0 2px 10px rgba(201, 168, 76, 0.3);
+            transition: box-shadow 0.2s, transform 0.2s;
         }
+        .vibe-btn:active { transform: scale(0.95); box-shadow: 0 0 20px rgba(201, 168, 76, 0.5); }
 
         /* ============ MENU LIST CARDS ============ */
         .menu-card {
@@ -842,7 +849,7 @@
 
         <!-- BANNER -->
         <div class="banner-card" onclick="openView('horarioView')">
-            <div class="banner-icon">📅</div>
+            <div class="banner-icon"><img src="img/icon-calendario.jpg" alt="Calendario"></div>
             <div class="banner-text">
                 <div class="banner-title" data-es="MI HORARIO" data-en="MY SCHEDULE">MI HORARIO</div>
                 <div class="banner-desc" data-es="Organiza tu semana y mejora tu orden" data-en="Organize your week and improve your flow">Organiza tu semana y mejora tu orden</div>
@@ -850,31 +857,29 @@
             <div class="banner-arrow">›</div>
         </div>
 
-        <div class="section-label" data-es="Modulos" data-en="Modules">Modulos</div>
-
         <!-- MAIN GRID -->
         <div class="main-grid">
             <div class="vibe-card vibe-purple" onclick="openView('tareasDiaView')">
-                <div class="vibe-icon">📋</div>
-                <div class="vibe-title" data-es="Tareas" data-en="Tasks">Tareas</div>
+                <div class="vibe-icon"><img src="img/icon-tareas.jpg" alt="Tareas"></div>
+                <div class="vibe-title" data-es="TAREAS" data-en="TASKS">TAREAS</div>
                 <div class="vibe-desc" data-es="Gestion de tareas diarias" data-en="Daily task management">Gestion de tareas diarias</div>
                 <button class="vibe-btn" data-es="Abrir" data-en="Open">Abrir</button>
             </div>
             <div class="vibe-card vibe-green" onclick="openView('dreamTeamView')">
-                <div class="vibe-icon">🎯</div>
-                <div class="vibe-title" data-es="My Dream Team" data-en="My Dream Team">My Dream Team</div>
+                <div class="vibe-icon"><img src="img/icon-dreamteam.jpg" alt="Dream Team"></div>
+                <div class="vibe-title" data-es="MY DREAM TEAM" data-en="MY DREAM TEAM">MY DREAM TEAM</div>
                 <div class="vibe-desc" data-es="Tus 9 agentes AI" data-en="Your 9 AI agents">Tus 9 agentes AI</div>
                 <button class="vibe-btn" data-es="Abrir" data-en="Open">Abrir</button>
             </div>
             <div class="vibe-card vibe-blue" onclick="openView('produccionesView')">
-                <div class="vibe-icon">🎛️</div>
-                <div class="vibe-title" data-es="Producciones" data-en="Productions">Producciones</div>
+                <div class="vibe-icon"><img src="img/icon-producciones.jpg" alt="Producciones"></div>
+                <div class="vibe-title" data-es="PRODUCCIONES" data-en="PRODUCTIONS">PRODUCCIONES</div>
                 <div class="vibe-desc" data-es="Seguimiento musical" data-en="Music tracking">Seguimiento musical</div>
                 <button class="vibe-btn" data-es="Abrir" data-en="Open">Abrir</button>
             </div>
             <div class="vibe-card vibe-orange" onclick="openView('grabadoraView')">
-                <div class="vibe-icon">🎙️</div>
-                <div class="vibe-title" data-es="Grabadora" data-en="Recorder">Grabadora</div>
+                <div class="vibe-icon"><img src="img/icon-grabadora.jpg" alt="Grabadora"></div>
+                <div class="vibe-title" data-es="GRABADORA" data-en="RECORDER">GRABADORA</div>
                 <div class="vibe-desc" data-es="Graba ideas musicales" data-en="Record musical ideas">Graba ideas musicales</div>
                 <button class="vibe-btn" data-es="Abrir" data-en="Open">Abrir</button>
             </div>
