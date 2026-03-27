@@ -68,44 +68,33 @@
 
         /* ============ BANNER CARD ============ */
         .banner-card {
-            background: linear-gradient(135deg, #4a044e 0%, #7c1d7c 50%, #4a044e 100%);
-            border-radius: 18px;
-            border: 1px solid rgba(180,60,180,0.25);
-            padding: 16px 18px;
+            background: linear-gradient(135deg, #4a044e, #701a75, #86198f);
+            border-radius: var(--radius);
+            padding: 22px 24px;
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 20px;
-            min-height: 80px;
+            gap: 16px;
+            margin-bottom: 28px;
             cursor: pointer;
             position: relative;
-            overflow: visible;
-            transition: transform 0.2s, box-shadow 0.3s;
+            overflow: hidden;
+            transition: transform 0.2s;
         }
         .banner-card:active, .banner-card.glow { transform: scale(0.98); background: linear-gradient(135deg, #86198f, #a21caf, #c026d3); box-shadow: 0 0 40px rgba(192, 38, 211, 0.5); }
-        .banner-icon {
-            z-index: 1;
-            width: 72px; height: 72px;
-            flex-shrink: 0;
-            position: relative;
-            margin-top: -36px;
-        }
-        .banner-icon img { width: 72px; height: 72px; object-fit: contain; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5)); }
-        .banner-icon::before {
+        .banner-card::after {
             content: '';
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 56px; height: 56px;
+            top: -50%; right: -30%;
+            width: 200px; height: 200px;
+            background: rgba(255,255,255,0.08);
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(180,60,180,0.4) 0%, transparent 70%);
-            filter: blur(16px);
-            z-index: 0;
         }
+        .banner-icon { z-index: 1; }
+        .banner-icon img { width: 48px; height: auto; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
         .banner-text { z-index: 1; flex: 1; }
-        .banner-title { font-weight: 800; font-size: 18px; color: #fff; margin-bottom: 2px; }
-        .banner-desc { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.3; }
-        .banner-arrow { font-size: 1.3rem; color: rgba(255,255,255,0.5); z-index: 1; }
+        .banner-title { font-weight: 800; font-size: 1.1rem; color: #fff; margin-bottom: 4px; }
+        .banner-desc { font-size: 0.8rem; color: rgba(255,255,255,0.85); line-height: 1.3; }
+        .banner-arrow { font-size: 1.3rem; color: rgba(255,255,255,0.6); z-index: 1; }
 
         /* ============ SECTION LABEL ============ */
         .section-label { font-size: 0.95rem; font-weight: 700; color: rgba(255,255,255,0.9); margin: 24px 0 16px 4px; }
@@ -114,89 +103,79 @@
         /* ============ MAIN GRID ============ */
         .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .vibe-card {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            padding: 20px 16px 18px;
+            border-radius: var(--radius);
+            padding: 28px 16px 22px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            min-height: 170px;
+            gap: 8px;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.3s ease, background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 160px;
         }
         .vibe-card:active, .vibe-card.glow { transform: scale(0.96); }
-        /* Card colors — exact gradients and borders from CEO app */
-        .vibe-purple { background: linear-gradient(160deg, #1a1040 0%, #2d1b6b 50%, #1a1040 100%); border: 1px solid rgba(147, 100, 255, 0.3); }
-        .vibe-green { background: linear-gradient(160deg, #0a1f1a 0%, #0d3d30 50%, #0a1f1a 100%); border: 1px solid rgba(0, 200, 150, 0.3); }
-        .vibe-blue { background: linear-gradient(160deg, #0a1525 0%, #142d4d 50%, #0a1525 100%); border: 1px solid rgba(50, 120, 220, 0.3); }
-        .vibe-orange { background: linear-gradient(160deg, #1a1008 0%, #3d2510 50%, #1a1008 100%); border: 1px solid rgba(200, 130, 50, 0.3); }
-        .vibe-pink { background: linear-gradient(160deg, #1a1040 0%, #2d1b6b 50%, #1a1040 100%); border: 1px solid rgba(147, 100, 255, 0.3); }
-        .vibe-teal { background: linear-gradient(160deg, #0a1f1a 0%, #0d3d30 50%, #0a1f1a 100%); border: 1px solid rgba(0, 200, 150, 0.3); }
-        .vibe-red { background: linear-gradient(160deg, #1a1008 0%, #3d2510 50%, #1a1008 100%); border: 1px solid rgba(200, 130, 50, 0.3); }
-        /* GLOW on tap — NO TOCAR */
-        .vibe-purple:active, .vibe-purple.glow { background: linear-gradient(145deg, #7e22ce, #9333ea, #a855f7); border-color: rgba(168, 85, 247, 0.6); box-shadow: 0 0 50px rgba(168, 85, 247, 0.6), 0 0 100px rgba(168, 85, 247, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
-        .vibe-green:active, .vibe-green.glow { background: linear-gradient(145deg, #047857, #059669, #10b981); border-color: rgba(16, 185, 129, 0.6); box-shadow: 0 0 50px rgba(16, 185, 129, 0.6), 0 0 100px rgba(16, 185, 129, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
-        .vibe-blue:active, .vibe-blue.glow { background: linear-gradient(145deg, #1d4ed8, #2563eb, #3b82f6); border-color: rgba(59, 130, 246, 0.6); box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 0 100px rgba(59, 130, 246, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
-        .vibe-orange:active, .vibe-orange.glow { background: linear-gradient(145deg, #c2410c, #ea580c, #f97316); border-color: rgba(249, 115, 22, 0.6); box-shadow: 0 0 50px rgba(249, 115, 22, 0.6), 0 0 100px rgba(249, 115, 22, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
-        /* Icon container — exact sizes from CEO app */
-        .vibe-icon {
-            position: relative;
-            width: 140px; height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 10px;
-            z-index: 1;
-        }
-        .vibe-icon img {
-            position: relative;
-            z-index: 1;
-            width: 120px;
-            height: auto;
-            object-fit: contain;
-            display: block;
-            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
-            transition: filter 0.3s, transform 0.3s;
-        }
-        /* Resplandor radial detrás del icono — exact from CEO app */
-        .vibe-icon::before {
+        .vibe-card::before {
             content: '';
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 48px; height: 48px;
+            top: -40%; right: -40%;
+            width: 160px; height: 160px;
+            background: rgba(255,255,255,0.04);
             border-radius: 50%;
-            filter: blur(16px);
-            z-index: 0;
         }
-        .vibe-purple .vibe-icon::before { background: radial-gradient(circle, rgba(147, 100, 255, 0.4) 0%, transparent 70%); }
-        .vibe-green .vibe-icon::before { background: radial-gradient(circle, rgba(0, 200, 150, 0.4) 0%, transparent 70%); }
-        .vibe-blue .vibe-icon::before { background: radial-gradient(circle, rgba(50, 120, 220, 0.4) 0%, transparent 70%); }
-        .vibe-orange .vibe-icon::before { background: radial-gradient(circle, rgba(200, 130, 50, 0.4) 0%, transparent 70%); }
-        .vibe-card:active .vibe-icon img, .vibe-card.glow .vibe-icon img {
-            filter: drop-shadow(0 0 20px rgba(255,255,255,0.4)) drop-shadow(0 0 40px rgba(255,255,255,0.15));
-            transform: scale(1.12);
+        .vibe-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30%; left: -30%;
+            width: 120px; height: 120px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 50%;
         }
-        .vibe-title { font-size: 13px; font-weight: 700; color: #fff; z-index: 1; text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 2px; }
-        .vibe-desc { font-size: 11px; color: rgba(255,255,255,0.5); z-index: 1; line-height: 1.3; margin: 0 0 10px; }
+        .vibe-purple { background: linear-gradient(145deg, #3b0764, #581c87, #6b21a8); box-shadow: 0 4px 16px rgba(88, 28, 135, 0.2); }
+        .vibe-green { background: linear-gradient(145deg, #022c22, #064e3b, #065f46); box-shadow: 0 4px 16px rgba(6, 78, 59, 0.2); }
+        .vibe-blue { background: linear-gradient(145deg, #172554, #1e3a8a, #1e40af); box-shadow: 0 4px 16px rgba(30, 58, 138, 0.2); }
+        .vibe-orange { background: linear-gradient(145deg, #431407, #7c2d12, #9a3412); box-shadow: 0 4px 16px rgba(124, 45, 18, 0.2); }
+        .vibe-pink { background: linear-gradient(145deg, #4a044e, #701a75, #86198f); box-shadow: 0 4px 16px rgba(112, 26, 117, 0.2); }
+        .vibe-teal { background: linear-gradient(145deg, #042f2e, #134e4a, #115e59); box-shadow: 0 4px 16px rgba(19, 78, 74, 0.2); }
+        .vibe-red { background: linear-gradient(145deg, #450a0a, #7f1d1d, #991b1b); box-shadow: 0 4px 16px rgba(127, 29, 29, 0.2); }
+        .vibe-purple:active, .vibe-purple.glow { background: linear-gradient(145deg, #7e22ce, #9333ea, #a855f7); box-shadow: 0 0 50px rgba(168, 85, 247, 0.6), 0 0 100px rgba(168, 85, 247, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-green:active, .vibe-green.glow { background: linear-gradient(145deg, #047857, #059669, #10b981); box-shadow: 0 0 50px rgba(16, 185, 129, 0.6), 0 0 100px rgba(16, 185, 129, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-blue:active, .vibe-blue.glow { background: linear-gradient(145deg, #1d4ed8, #2563eb, #3b82f6); box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 0 100px rgba(59, 130, 246, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-orange:active, .vibe-orange.glow { background: linear-gradient(145deg, #c2410c, #ea580c, #f97316); box-shadow: 0 0 50px rgba(249, 115, 22, 0.6), 0 0 100px rgba(249, 115, 22, 0.2), inset 0 0 40px rgba(255,255,255,0.08); }
+        .vibe-icon {
+            z-index: 1;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            transition: filter 0.2s, transform 0.2s;
+        }
+        .vibe-icon img {
+            width: 48px;
+            height: auto;
+            object-fit: contain;
+        }
+        .vibe-card:active .vibe-icon, .vibe-card.glow .vibe-icon {
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5)) drop-shadow(0 0 40px rgba(255,255,255,0.2));
+            transform: scale(1.15);
+        }
+        .vibe-title { font-size: 0.85rem; font-weight: 800; color: #fff; z-index: 1; text-transform: uppercase; letter-spacing: 0.5px; }
+        .vibe-desc { font-size: 0.7rem; color: rgba(255,255,255,0.7); z-index: 1; line-height: 1.3; }
         .vibe-btn {
-            padding: 6px 24px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 14px;
-            color: rgba(255,255,255,0.7);
-            font-size: 12px;
-            font-weight: 600;
+            background: rgba(255,255,255,0.2);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: #fff;
+            padding: 8px 24px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
             z-index: 1;
             cursor: pointer;
-            -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
             transition: background 0.2s, transform 0.2s;
         }
-        .vibe-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.15); }
+        .vibe-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.3); }
 
         /* ============ MENU LIST CARDS ============ */
         .menu-card {
@@ -875,6 +854,8 @@
             </div>
             <div class="banner-arrow">›</div>
         </div>
+
+        <div class="section-label" data-es="Modulos" data-en="Modules">Modulos</div>
 
         <!-- MAIN GRID -->
         <div class="main-grid">
