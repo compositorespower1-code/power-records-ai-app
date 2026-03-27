@@ -104,18 +104,18 @@
         .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .vibe-card {
             border-radius: var(--radius);
-            padding: 28px 16px 22px;
+            padding: 16px 14px 14px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            gap: 8px;
+            gap: 6px;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.3s ease, background 0.3s ease;
             position: relative;
             overflow: hidden;
-            min-height: 160px;
+            min-height: 130px;
         }
         .vibe-card:active, .vibe-card.glow { transform: scale(0.96); }
         .vibe-card::before {
@@ -151,7 +151,7 @@
             transition: filter 0.2s, transform 0.2s;
         }
         .vibe-icon img {
-            width: 110px;
+            width: 130px;
             height: auto;
             object-fit: contain;
         }
